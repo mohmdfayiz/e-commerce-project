@@ -8,5 +8,6 @@ router.get('/login',controller.login)
 router.get('/signup',controller.signup)
 
 router.post('/signup',controller.doSignup)
+router.post('/login',controller.doLogin)
 
 module.exports = router;
