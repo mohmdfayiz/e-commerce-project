@@ -1,53 +1,93 @@
 const userModel = require("../model/signupModel");
 const bcrypt = require("bcrypt");
 
-exports.home = (req, res) => res.render("userViews/home");
-exports.login = (req, res) => res.render("userViews/userLogin");
-exports.signup = (req, res) => res.render("userViews/signup");
-
-// doSignup
-exports.doSignup = (req, res) => {
-  const newUser = new userModel({
-    userName: req.body.userName,
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-      if (err) throw err;
-      newUser.password = hash;
-      newUser
-        .save()
-        .then(() => {
-          res.redirect("/");
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/signup");
-        });
-    });
-  });
+// User Home Page
+exports.home = (req, res) => {
+  if (req.session.userLogin) {
+    res.render("userViews/home", { login: true });
+  } else {
+    res.render("userViews/home", { login: false });
+  }
 };
 
-// doLogin
-exports.doLogin = (req, res) => {
-  const useremail = req.body.email;
-  const password = req.body.password;
+// User Login page
+exports.login = (req, res) => {
+  if (req.session.userLogin) {
+    res.redirect("/");
+  } else {
+    res.render("userViews/userLogin",{ loginErr: req.session.loginErr, passwordErr:req.session.passwordErr});
+  }
+};
 
-  User.findOne({ $and: [{email: useremail}, {type:'user'}]},(err, foundUser) => {
-    if (err) console.log(err);
-    if (!foundUser) {
-      res.redirect("/login");
-    } else {
-      bcrypt.compare(password, foundUser.password , (err, isMatch) => {
-        if (err) throw err;
-        if (isMatch) {
-          res.redirect("/");
-        } else {
-          res.redirect("/login");
-        }
-      });
-    }
+// User Signup page
+exports.signup = (req, res) => {
+  if (req.session.userLogin) {
+    res.redirect("/");
+  } else {
+    res.render("userViews/signup");
+  }
+};
+
+// DO_SIGNUP
+exports.doSignup = async (req, res) => {
+  const { userName, email, password } = req.body;
+
+  let user = await userModel.findOne({ email });
+  if (user) {
+    return res.redirect("/signup");
+  }
+
+  const hashpass = await bcrypt.hash(password, 10);
+  const newUser = new userModel({
+    userName,
+    email,
+    password: hashpass,
   });
+
+  await newUser
+    .save()
+    .then(() => {
+      req.session.userLogin = true;
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/signup");
+    });
+};
+
+// DO_LOGIN
+exports.doLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await userModel.findOne({
+    $and: [{ email: email }, { type: "user" }],
+  });
+
+  req.session.loginErr = false;
+  req.session.passwordErr = false;
+
+  if (!user) {
+    console.log("invalid email");
+    req.session.loginErr = true;
+    res.redirect("/login");
+  } else {
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      req.session.userLogin = true;
+      res.redirect("/");
+    } else {
+      req.session.passwordErr = true;
+      console.log('invalid password');
+      res.redirect("/login");
+    }
+  }
+};
+
+// Logout
+exports.logout = (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
 };
