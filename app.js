@@ -1,9 +1,10 @@
 const express = require("express");
 const path = require("path");
-const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const fileUpload = require("express-fileupload");
 const Mongoose = require("./configuration/connection");
+const multer = require("multer");
 
 const app = express();
 
@@ -17,17 +18,31 @@ app.set("view engine", "ejs");
 
 //static files
 app.use("/public", express.static(path.join(__dirname, "public")));
-app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
+// multer
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+app.use(
+  multer({ dest: "public/images", storage: fileStorage }).single("image")
+);
 
 //session and cookied
 app.use(cookieParser());
-const DAY = 1000*60*60*24;
 app.use(
   session({
     secret: "Your_Secret_Key",
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: DAY },
+    cookie: { maxAge: 600000 },
   })
 );
 

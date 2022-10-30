@@ -1,12 +1,12 @@
-const userModel = require("../model/signupModel");
+const userModel = require("../model/userModel");
 const bcrypt = require("bcrypt");
 
 // User Home Page
 exports.home = (req, res) => {
   if (req.session.userLogin) {
-    res.render("userViews/home", { login: true });
+    res.render("userViews/index", { login: true });
   } else {
-    res.render("userViews/home", { login: false });
+    res.render("userViews/index", { login: false });
   }
 };
 
@@ -24,16 +24,17 @@ exports.signup = (req, res) => {
   if (req.session.userLogin) {
     res.redirect("/");
   } else {
-    res.render("userViews/signup");
+    res.render("userViews/signup",{emailExist:req.session.exist});
   }
 };
 
 // DO_SIGNUP
 exports.doSignup = async (req, res) => {
   const { userName, email, password } = req.body;
-
+  req.session.exist = false;
   let user = await userModel.findOne({ email });
   if (user) {
+    req.session.exist = true;
     return res.redirect("/signup");
   }
 
@@ -91,3 +92,9 @@ exports.logout = (req, res) => {
   req.session.destroy();
   res.redirect("/");
 };
+
+
+// VIEW CART
+exports.cart = (req,res) =>{
+  res.render('userViews/shoping-cart')
+} 
