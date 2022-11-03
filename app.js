@@ -19,7 +19,7 @@ app.set("view engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 
-// multer
+// MULTER
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images");
@@ -42,6 +42,7 @@ app.use(
     secret: "Your_Secret_Key",
     resave: false,
     saveUninitialized: false,
+    cookie:{maxAge: 6000000}
   })
 );
 

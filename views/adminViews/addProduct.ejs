@@ -9,6 +9,7 @@
       >
         <h5 class="mb-0">Add Product</h5>
       </div>
+      <p id="validation"></p>
       <div class="card-body">
         <form
           action="/admin/addProduct"
@@ -23,7 +24,7 @@
               name="category"
               class="form-select"
               id="exampleFormControlSelect1"
-              aria-label="select One" 
+              aria-label="select One"
             >
               <option selected>Open this select menu</option>
               <% categories.forEach(function(x){ %>
@@ -41,6 +42,7 @@
               class="form-control"
               id="basic-default-company"
               placeholder="One sixty"
+              required
             />
           </div>
           <div class="mb-3">
@@ -52,6 +54,7 @@
               class="form-control"
               placeholder="Something about the product."
               name="description"
+              required
             ></textarea>
           </div>
           <div class="mb-3">
@@ -63,6 +66,9 @@
                 class="form-control"
                 placeholder="$..."
                 aria-describedby="basic-default-email2"
+                id="price"
+                required
+                pattern="/^\d{6}$/"
               />
             </div>
           </div>
@@ -73,6 +79,8 @@
               name="quantity"
               class="form-control"
               placeholder="10"
+              required
+              pattern="/^\d{4}$/"
             />
           </div>
           <div class="mb-3">
@@ -82,10 +90,14 @@
               type="file"
               id="formFile"
               name="image"
+              required
+              pattern="/^[a-zA-Z\d][a-zA-Z -_\d.]*[a-zA-Z\d]$/"
             />
           </div>
 
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary">
+            Submit
+          </button>
         </form>
       </div>
     </div>

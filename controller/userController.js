@@ -14,7 +14,7 @@ exports.userSession =  (req,res,next) =>{
 // User Home Page
 exports.home = async(req, res) => {
 
-let products = await productModel.find({})
+let products = await productModel.find({isDeleted:false})
 
   if (req.session.userLogin) {
     res.render("userViews/index", { products, login: true });

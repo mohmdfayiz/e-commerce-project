@@ -6,11 +6,11 @@ const categoryModel = require("../model/categoryModel");
 const { isObjectIdOrHexString } = require("mongoose");
 
 // SESSION MIDDLEWARE
-exports.adminSession =  (req,res,next) =>{
-  if(req.session.adminLogin){
-    next()
-  }else{
-    res.redirect('/admin');
+exports.adminSession = (req, res, next) => {
+  if (req.session.adminLogin) {
+    next();
+  } else {
+    res.redirect("/admin");
   }
 };
 
@@ -77,32 +77,34 @@ exports.allUsers = async (req, res) => {
 };
 
 // BLOCK USER
-exports.blockUser = async (req,res) => {
-  let id = req.params.id
-  await userModel.findByIdAndUpdate({_id:id},{$set:{type:"Blocked"}})
-  .then(()=>{
-    res.redirect('/admin/allUsers')
-  })
-}
+exports.blockUser = async (req, res) => {
+  let id = req.params.id;
+  await userModel
+    .findByIdAndUpdate({ _id: id }, { $set: { type: "Blocked" } })
+    .then(() => {
+      res.redirect("/admin/allUsers");
+    });
+};
 
 // UNBLOCK USER
-exports.unblockUser = async (req,res) =>{
-  let id = req.params.id
-  await userModel.findByIdAndUpdate({_id:id},{$set:{type:"user"}})
-  .then(()=>{
-    res.redirect('/admin/allUsers')
-})
-}
+exports.unblockUser = async (req, res) => {
+  let id = req.params.id;
+  await userModel
+    .findByIdAndUpdate({ _id: id }, { $set: { type: "user" } })
+    .then(() => {
+      res.redirect("/admin/allUsers");
+    });
+};
 
 // VIEW ALL PRODUCTS
 exports.allProducts = async (req, res) => {
-  let product = await productModel.find({isDeleted:false});
+  let product = await productModel.find({ isDeleted: false });
   res.render("adminViews/products", { product });
-}
+};
 
 // ADD PRODUCT FORM
 exports.addProduct = async (req, res) => {
-  let categories = await categoryModel.find({});
+  let categories = await categoryModel.find();
   res.render("adminViews/addProduct", { categories });
 };
 
@@ -148,7 +150,15 @@ exports.editProduct = async (req, res) => {
 exports.editDetails = async (req, res) => {
   const { category, productName, description, price, quantity } = req.body;
   console.log(req.body);
-  const image = req.file;
+
+  if (req.file) {
+    let image = req.file;
+    await productModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $set: { imageUrl: image.path } }
+    );
+  }
+
   let details = await productModel.findOneAndUpdate(
     { _id: req.params.id },
     {
@@ -158,27 +168,38 @@ exports.editDetails = async (req, res) => {
         description,
         price,
         quantity,
-        imageUrl: image.path,
       },
     }
   );
-
   await details.save().then(() => {
     res.redirect("/admin/allProducts");
   });
 };
 
-// DELETED PRODUCTS PAGE
-exports.deletedProduct = async (req,res) =>{
-  let products = await productModel.find({isDeleted:true});
-  res.render('adminViews/deletedProduct')
-}
-
 //  DELETE PRODUCT
 exports.deleteProduct = async (req, res) => {
   let id = req.params.id;
-  await productModel.findByIdAndUpdate({_id:id},{ $set:{isDeleted:true} });
+  await productModel.findByIdAndUpdate(
+    { _id: id },
+    { $set: { isDeleted: true } }
+  );
   res.redirect("/admin/allProducts");
+};
+
+// DELETED PRODUCTS PAGE
+exports.deletedProduct = async (req, res) => {
+  let product = await productModel.find({ isDeleted: true });
+  res.render("adminViews/deletedProducts", { product });
+};
+
+// UNDO DELETE
+exports.undoDeleteProduct = async (req, res) => {
+  let id = req.params.id;
+  await productModel.findOneAndUpdate(
+    { _id: id },
+    { $set: { isDeleted: false } }
+  );
+  res.redirect("/admin/deletedProducts");
 };
 
 // CATEGORIES
