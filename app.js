@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const fileUpload = require("express-fileupload");
 const Mongoose = require("./configuration/connection");
 const multer = require("multer");
 
@@ -19,6 +18,7 @@ app.set("view engine", "ejs");
 //static files
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
+
 // multer
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -40,9 +40,8 @@ app.use(cookieParser());
 app.use(
   session({
     secret: "Your_Secret_Key",
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 600000 },
+    resave: false,
+    saveUninitialized: false,
   })
 );
 

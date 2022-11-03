@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema({
     imageUrl:{
         type:String,
         require:true
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false 
     }
 })
 

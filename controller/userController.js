@@ -1,12 +1,25 @@
 const userModel = require("../model/userModel");
 const bcrypt = require("bcrypt");
+const productModel = require("../model/productModel");
+
+// SESSION MIDDLEWARE
+exports.userSession =  (req,res,next) =>{
+  if(req.session.userLogin){
+    next()
+  }else{
+    res.redirect('/login');
+  }
+};
 
 // User Home Page
-exports.home = (req, res) => {
+exports.home = async(req, res) => {
+
+let products = await productModel.find({})
+
   if (req.session.userLogin) {
-    res.render("userViews/index", { login: true });
+    res.render("userViews/index", { products, login: true });
   } else {
-    res.render("userViews/index", { login: false });
+    res.render("userViews/index", { products, login: false });
   }
 };
 
@@ -32,6 +45,7 @@ exports.signup = (req, res) => {
 exports.doSignup = async (req, res) => {
   const { userName, email, password } = req.body;
   req.session.exist = false;
+  
   let user = await userModel.findOne({ email });
   if (user) {
     req.session.exist = true;
@@ -92,7 +106,6 @@ exports.logout = (req, res) => {
   req.session.destroy();
   res.redirect("/");
 };
-
 
 // VIEW CART
 exports.cart = (req,res) =>{

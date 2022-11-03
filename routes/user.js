@@ -6,7 +6,7 @@ const controller = require('../controller/userController')
 router.get('/',controller.home)
 router.get('/login',controller.login)
 router.get('/signup',controller.signup)
-router.get('/cart',controller.cart)
+router.get('/cart',controller.userSession,controller.cart)
 
 // POST METHODS
 router.post('/signup',controller.doSignup)

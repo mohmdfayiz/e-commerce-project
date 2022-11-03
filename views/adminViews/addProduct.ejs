@@ -23,12 +23,12 @@
               name="category"
               class="form-select"
               id="exampleFormControlSelect1"
-              aria-label="select One"
+              aria-label="select One" 
             >
               <option selected>Open this select menu</option>
-              <option value="Bicycle">Bicycle</option>
-              <option value="Accessories">Accessories</option>
-              <option value="Gadgets">Gadgets</option>
+              <% categories.forEach(function(x){ %>
+              <option value="<%= x.category %>"><%= x.category %></option>
+              <% }) %>
             </select>
           </div>
           <div class="mb-3">
