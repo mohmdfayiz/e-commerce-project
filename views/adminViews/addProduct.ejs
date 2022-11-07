@@ -9,7 +9,6 @@
       >
         <h5 class="mb-0">Add Product</h5>
       </div>
-      <p id="validation"></p>
       <div class="card-body">
         <form
           action="/admin/addProduct"
@@ -28,7 +27,7 @@
             >
               <option selected>Open this select menu</option>
               <% categories.forEach(function(x){ %>
-              <option value="<%= x.category %>"><%= x.category %></option>
+              <option value="<%= x._id %>"><%= x.category %></option>
               <% }) %>
             </select>
           </div>

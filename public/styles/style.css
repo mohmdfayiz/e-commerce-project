@@ -1,0 +1,26 @@
+.search-btn {
+    float: right;
+    width: 40px;
+    height: 40px;
+    margin-right: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .search-box:hover > .search-text {
+    width: 200px;
+    padding: 0 6px;
+  }
+
+  .search-text {
+    border: none;
+    background: none;
+    outline: none;
+    float: left;
+    color: rgb(13, 13, 14);
+    font-size: 16px;
+    transition: 0.5s;
+    line-height: 40px;
+    width: 0px;
+  }

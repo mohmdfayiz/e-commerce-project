@@ -25,9 +25,11 @@
               id="exampleFormControlSelect1"
               aria-label="select One"
             >
-            <option value="<%= product.category %>"><%= product.category %></option>
-             <% categories.forEach(function(data){ %>
-              <option value="<%= data.category %>"><%= data.category %></option>
+              <option value="<%= product.category._id %>">
+                <%= product.category.category %>
+              </option>
+              <% categories.forEach(function(data){ %>
+              <option value="<%= data._id %>"><%= data.category %></option>
               <% }) %>
             </select>
           </div>
@@ -55,7 +57,9 @@
               placeholder="Type something about product"
               name="description"
               required
-            ><%= product.description%></textarea>
+            >
+<%= product.description%></textarea
+            >
           </div>
           <div class="mb-3">
             <label class="form-label" for="basic-default-email">Price</label>
@@ -85,7 +89,11 @@
             />
           </div>
           <div>
-            <img src="/<%= product.imageUrl %>" alt="Product image" style="height: 80px; width:auto">
+            <img
+              src="/<%= product.imageUrl %>"
+              alt="Product image"
+              style="height: 80px; width: auto"
+            />
           </div>
           <div class="mb-3">
             <label for="formFile" class="form-label">Image</label>

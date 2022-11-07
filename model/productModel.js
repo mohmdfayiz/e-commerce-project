@@ -2,8 +2,9 @@ const mongoose = require ('mongoose')
 
 const productSchema = new mongoose.Schema({
     category:{
-        type:String,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref: 'Category',
     },
     productName:{
         type:String,
@@ -28,6 +29,14 @@ const productSchema = new mongoose.Schema({
     isDeleted:{
         type:Boolean,
         default:false 
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
+    modifiedAt:{
+        type:Date,
+        default:Date.now
     }
 })
 

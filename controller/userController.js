@@ -1,26 +1,25 @@
-const userModel = require("../model/userModel");
-const bcrypt = require("bcrypt");
-const productModel = require("../model/productModel");
+const userHelpers = require("../helpers/user-helpers");
+const { response } = require("express");
 
-// SESSION MIDDLEWARE
-exports.userSession =  (req,res,next) =>{
-  if(req.session.userLogin){
+// SESSION MIDDLEWARE FOR CART, WISHLIST, AND ACCOUNT
+exports.userSession = (req, res, next) => {
+  if (req.session.userLogin) {
     next()
-  }else{
+  } else {
     res.redirect('/login');
   }
 };
 
 // User Home Page
-exports.home = async(req, res) => {
+exports.home = async (req, res) => {
 
-let products = await productModel.find({isDeleted:false})
-
-  if (req.session.userLogin) {
-    res.render("userViews/index", { products, login: true });
-  } else {
-    res.render("userViews/index", { products, login: false });
-  }
+  userHelpers.getProducts().then((products) => {
+    if (req.session.userLogin) {
+      res.render("userViews/index", { products, login: true })
+    } else {
+      res.render("userViews/index", { products, login: false });
+    }
+  })
 };
 
 // User Login page
@@ -28,7 +27,7 @@ exports.login = (req, res) => {
   if (req.session.userLogin) {
     res.redirect("/");
   } else {
-    res.render("userViews/userLogin",{ loginErr: req.session.loginErr, passwordErr:req.session.passwordErr});
+    res.render("userViews/userLogin", { loginErr: req.session.loginErr, passwordErr: req.session.passwordErr });
   }
 };
 
@@ -37,68 +36,43 @@ exports.signup = (req, res) => {
   if (req.session.userLogin) {
     res.redirect("/");
   } else {
-    res.render("userViews/signup",{emailExist:req.session.exist});
+    res.render("userViews/signup", { emailExist: req.session.exist });
   }
 };
 
 // DO_SIGNUP
 exports.doSignup = async (req, res) => {
-  const { userName, email, password } = req.body;
   req.session.exist = false;
-  
-  let user = await userModel.findOne({ email });
-  if (user) {
-    req.session.exist = true;
-    return res.redirect("/signup");
-  }
 
-  const hashpass = await bcrypt.hash(password, 10);
-  const newUser = new userModel({
-    userName,
-    email,
-    password: hashpass,
-  });
-
-  await newUser
-    .save()
-    .then(() => {
-      req.session.userLogin = true;
-      res.redirect("/");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect("/signup");
-    });
+  userHelpers.doSignup(req.body).then((result) => {
+    if (result) {
+      req.session.userLogin = true
+      res.redirect('/')
+    } else {
+      req.session.exist = true
+      res.redirect('/signup')
+    }
+  })
 };
 
 // DO_LOGIN
 exports.doLogin = async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await userModel.findOne({
-    $and: [{ email: email }, { type: "user" }],
-  });
 
   req.session.loginErr = false;
   req.session.passwordErr = false;
 
-  if (!user) {
-    console.log("invalid email");
-    req.session.loginErr = true;
-    res.redirect("/login");
-  } else {
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (isMatch) {
-      req.session.userLogin = true;
-      res.redirect("/");
+  userHelpers.doLogin(req.body).then((response) => {
+    if (response.status) {
+      req.session.userLogin = true
+      res.redirect('/')
+    } else if (response.passwordErr) {
+      req.session.passwordErr = true
+      res.redirect('/login')
     } else {
-      req.session.passwordErr = true;
-      console.log('invalid password');
-      res.redirect("/login");
+      req.session.loginErr = true
+      res.redirect('/login')
     }
-  }
+  })
 };
 
 // Logout
@@ -108,6 +82,23 @@ exports.logout = (req, res) => {
 };
 
 // VIEW CART
-exports.cart = (req,res) =>{
-  res.render('userViews/shoping-cart')
-} 
+exports.cart = (req, res) => {
+  res.render('userViews/shoping-cart', { login: true })
+}
+
+//  USER ACCOUNT
+exports.account = (req, res) => {
+  res.render('userViews/err')
+}
+
+// PRODUCT DETAILS
+exports.product_details = async (req, res) => {
+  userHelpers.product_details(req.params.id).then((details) => {
+    const { product, related_products } = details
+    if (req.session.userLogin) {
+      res.render('userViews/product-detail', { product, related_products, login: true })
+    } else {
+      res.render('userViews/product-detail', { product, related_products, login: false })
+    }
+  })
+}

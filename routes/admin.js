@@ -6,7 +6,7 @@ const controller = require('../controller/adminController')
 router.get('/',controller.login)
 router.get('/dashboard',controller.adminHome)
 router.get('/allProducts',controller.adminSession,controller.allProducts)
-router.get('/deletedProducts',controller.adminSession,controller.deletedProduct)
+router.get('/deletedProducts',controller.adminSession,controller.deletedProducts)
 router.get('/addProduct',controller.adminSession,controller.addProduct)
 router.get('/editProduct/:id', controller.adminSession,controller.editProduct)
 router.get('/allUsers',controller.adminSession,controller.allUsers)
@@ -24,7 +24,6 @@ router.post('/deleteCategory/:id',controller.deleteCategory)
 router.post('/editProductDetails/:id',controller.editDetails)
 router.post('/blockUser/:id',controller.blockUser)
 router.post('/unblockUser/:id',controller.unblockUser)
-
 
 
 module.exports = router;
