@@ -1,7 +1,9 @@
 const productModel = require('../model/productModel')
 const userModel = require('../model/userModel')
 const categoryModel = require("../model/categoryModel");
-const bcrypt = require('bcrypt')
+const subcategoryModel = require("../model/subcategoryModel")
+const bcrypt = require('bcrypt');
+const { login } = require('../controller/adminController');
 
 module.exports = {
 
@@ -46,7 +48,7 @@ module.exports = {
 
     unblockUser: (id) => {
         return new Promise(async (resolve, reject) => {
-            await userModel.findByIdAndUpdate({ _id: id }, { $set: { type: "user" } })
+            await userModel.findByIdAndUpdate({ _id: id }, { $set: { type: "Active" } })
             resolve()
         })
     },
@@ -67,9 +69,54 @@ module.exports = {
         })
     },
 
-    deleteCategory:(id)=>{
-        return new Promise (async(resolve,reject)=>{
-            await categoryModel.findByIdAndDelete({ _id: id })
+    deleteCategory: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await categoryModel.findByIdAndUpdate({ _id: id }, { $set: { isDeleted: true } })
+            resolve()
+        })
+    },
+
+    restoreCategory: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await categoryModel.findOneAndUpdate({ _id: id }, { $set: { isDeleted: false } })
+            resolve()
+        })
+    },
+
+    getSubcategories: () => {
+        return new Promise(async (resolve, reject) => {
+            let categories = await categoryModel.find({isDeleted:false})
+            let subcategories = await subcategoryModel.find()
+            resolve({ categories, subcategories })
+        })
+    },
+
+    subcategories: ()=>{
+        return new Promise(async(resolve,reject)=>{
+            let categories = await subcategoryModel.find({isDeleted:false})
+            resolve(categories)
+        })
+    },
+
+    addSubcategory: (data) => {
+        return new Promise(async (resolve, reject) => {
+            const newSubcategory = await subcategoryModel(data)
+            newSubcategory.save().then(() => {
+                resolve()
+            })
+        })
+    },
+
+    deleteSubcategories: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await subcategoryModel.findByIdAndUpdate({ _id: id }, { isDeleted: true })
+            resolve()
+        })
+    },
+
+    restoreSubcategory: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await subcategoryModel.findByIdAndUpdate({ _id: id }, { isDeleted: false })
             resolve()
         })
     },
@@ -104,7 +151,7 @@ module.exports = {
     editProduct: (id) => {
         return new Promise(async (resolve, reject) => {
             let product = await productModel.findOne({ _id: id }).populate('category')
-            let categories = await categoryModel.find({ _id: { $ne: product.category } })
+            let categories = await subcategoryModel.find({ _id: { $ne: product.category } })
             resolve({ product, categories })
         })
     },

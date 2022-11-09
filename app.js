@@ -52,6 +52,9 @@ const userRouter = require("./routes/user");
 // MAIN ROUTES
 app.use("/admin", adminRouter);
 app.use("/", userRouter);
+app.use("*",(req,res)=>{
+  res.render('err')
+})
 
 app.listen("8080", () => {
   console.log("server is running on http://localhost:8080");

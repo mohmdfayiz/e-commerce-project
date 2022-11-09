@@ -90,7 +90,7 @@ exports.allProducts = async (req, res) => {
 
 // ADD PRODUCT FORM
 exports.addProduct = async (req, res) => {
-  adminHelpers.getCategories().then((categories) => {
+  adminHelpers.subcategories().then((categories) => {
     res.render("adminViews/addProduct", { categories });
   })
 };
@@ -135,8 +135,8 @@ exports.deletedProducts = async (req, res) => {
   })
 };
 
-// UNDO DELETE
-exports.undoDeleteProduct = async (req, res) => {
+// UNDO DELETE PRODUCT
+exports.undoDeleteProduct = (req, res) => {
   let id = req.params.id;
   adminHelpers.restoreProduct(id).then(() => {
     res.redirect("/admin/deletedProducts");
@@ -144,7 +144,7 @@ exports.undoDeleteProduct = async (req, res) => {
 };
 
 // CATEGORIES 
-exports.categories = async (req, res) => {
+exports.categories = (req, res) => {
   adminHelpers.getCategories().then((categories) => {
     res.render("adminViews/categories", { categories });
   })
@@ -159,14 +159,51 @@ exports.addCatergory = (req, res) => {
 };
 
 // DELETE CATEGORY
-exports.deleteCategory = async (req, res) => {
+exports.deleteCategory = (req, res) => {
   let id = req.params.id;
   adminHelpers.deleteCategory(id).then(() => {
     res.redirect("/admin/categories");
   })
 };
 
+// RESTORE CATOGORY
+exports.restoreCategory = (req, res)=>{
+  adminHelpers.restoreCategory(req.params.id).then(()=>{
+    res.redirect('/admin/categories')
+  })
+}
+
+// SUBCATEGORIES
+exports.subcategories = (req, res) => {
+  adminHelpers.getSubcategories().then((result) => {
+    const {categories, subcategories} = result
+    res.render("adminViews/subcategories", { categories, subcategories })
+  })
+}
+
+// NEW SUBCATEGORY
+exports.addSubcatergory = (req, res) => {
+  adminHelpers.addSubcategory(req.body).then(() => {
+    res.redirect('/admin/subcategories')
+  })
+}
+
+// DELETE SUBCATEGORY
+exports.deleteSubcategory = (req, res) =>{
+  adminHelpers.deleteSubcategories(req.params.id).then(()=>{
+    res.redirect('/admin/subcategories')
+  })
+}
+
+// RESTORE SUBCATEGORIES
+exports.restoreSubcategory = (req,res) =>{
+  adminHelpers.restoreSubcategory(req.params.id).then(()=>{
+    res.redirect('/admin/subcategories')
+  })
+} 
+
 // ORDERS
 exports.orders = (req, res) => {
-  res.render("adminViews/orders");
+  res.render("adminViews/orders")
+
 };

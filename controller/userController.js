@@ -10,9 +10,8 @@ exports.userSession = (req, res, next) => {
   }
 };
 
-// User Home Page
+// USER HOME PAGE
 exports.home = async (req, res) => {
-
   userHelpers.getProducts().then((products) => {
     if (req.session.userLogin) {
       res.render("userViews/index", { products, login: true })
@@ -22,7 +21,7 @@ exports.home = async (req, res) => {
   })
 };
 
-// User Login page
+// USER LOGIN PAGE
 exports.login = (req, res) => {
   if (req.session.userLogin) {
     res.redirect("/");
@@ -31,7 +30,7 @@ exports.login = (req, res) => {
   }
 };
 
-// User Signup page
+// USER SIGN UP PAGE
 exports.signup = (req, res) => {
   if (req.session.userLogin) {
     res.redirect("/");
@@ -64,6 +63,7 @@ exports.doLogin = async (req, res) => {
   userHelpers.doLogin(req.body).then((response) => {
     if (response.status) {
       req.session.userLogin = true
+      req.session.user = response.user // user data
       res.redirect('/')
     } else if (response.passwordErr) {
       req.session.passwordErr = true
@@ -75,20 +75,16 @@ exports.doLogin = async (req, res) => {
   })
 };
 
-// Logout
+// LOGOUT
 exports.logout = (req, res) => {
   req.session.destroy();
   res.redirect("/");
 };
 
-// VIEW CART
-exports.cart = (req, res) => {
-  res.render('userViews/shoping-cart', { login: true })
-}
 
-//  USER ACCOUNT
+// USER ACCOUNT
 exports.account = (req, res) => {
-  res.render('userViews/err')
+  res.redirect('/')
 }
 
 // PRODUCT DETAILS
@@ -100,5 +96,38 @@ exports.product_details = async (req, res) => {
     } else {
       res.render('userViews/product-detail', { product, related_products, login: false })
     }
+  })
+  console.log(req.session.userId);
+}
+
+// ADD TO WISHLIST
+exports.addToWishlist = async(req,res) =>{
+
+  let productId = req.params.productId
+  let userId = req.session.user._id    //user id
+  userHelpers.addto_wishlist(userId, productId).then(()=>{
+    res.redirect('/')
+  })
+}
+
+// VIEW CART
+exports.cart = async(req,res) =>{
+  let userId = req.session.user._id
+  userHelpers.cart_items(userId).then(()=>{
+    res.render('userViews/shoping-cart',{login:true})
+  })
+}
+
+// ADD TO CART
+exports.addToCart = (req,res) =>{
+
+  let userId = req.session.user._id
+  let productId = req.params.productId
+  let quantity = req.body.quantity
+
+  console.log("userId: "+ userId +" prdct "+ productId + " quantity "+quantity);
+
+  userHelpers.addto_cart(userId, productId, quantity).then(()=>{
+    res.redirect('/product_details/'+productId)
   })
 }

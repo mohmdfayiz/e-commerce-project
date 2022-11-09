@@ -44,15 +44,15 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                           </button> -->
                     <div>
-                      <% if(x.type === "user"){ %>
+                      <% if(x.type === "Active"){ %>
                       <form action="/admin/blockUser/<%= x._id %>" method="post">
-                        <button class="dropdown-item btn" type="submit">
+                        <button class="dropdown-item btn" type="submit"  onclick="return confirm('Are you sure?')">
                           Block
                         </button>
                       </form>
                       <% }else{ %>
                         <form action="/admin/unblockUser/<%= x._id %>" method="post">
-                          <button class="dropdown-item btn" type="submit">
+                          <button class="dropdown-item btn" type="submit"  onclick="return confirm('Are you sure?')">
                             Unblock
                           </button>
                         </form>

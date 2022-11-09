@@ -14,8 +14,15 @@
 
       <!-- Hoverable Table rows -->
 
-      <form action="/admin/addCategory" method="post" class="mx-4 mt-4">
-        <div class="input-group">
+      <form action="/admin/addSubcategory" method="post" class="mx-4 mt-4">
+        <div class="input-group"> 
+          <select name="parentCategory" class="form-select" id="">
+            <option value="">Select a category</option>
+            <% categories.forEach(function(x){ %>
+              <option value="<%= x.category %>"><%= x.category %></option>
+            <% }) %>
+          </select>
+
           <input
             type="text"
             name="category"
@@ -30,30 +37,31 @@
       </form>
 
       <div class="card mt-2 mx-4">
-        <h5 class="card-header">Categories.</h5>
+        <h5 class="card-header">Subcategories.</h5>
         <div class="table-responsive text-nowrap">
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Parent</th>
                 <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody class="table-border-bottom-0">
-            <% categories.forEach(function(x){ %>
+              <% subcategories.forEach(function(x){ %>
               <tr>
                 <td><%= x.category %></td>
-
+                <td><%= x.parentCategory %></td>
                 <td>
                   <div class="text-center">
-                    <% if (!x.isDeleted){ %>
-                    <form action="/admin/deleteCategory/<%= x._id %>" method="post">
+                    <% if(!x.isDeleted){ %>
+                    <form action="/admin/deleteSubcategory/<%= x._id %>" method="post">
                       <button type="submit" class="btn dropdown-item" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
                     <% }else{ %>
-                      <form action="/admin/restoreCategory/<%= x._id %>" method="post">
-                        <button type="submit" class="btn dropdown-item" onclick="return confirm('Are you sure?')">Restore</button>
-                      </form>
+                    <form action="/admin/restoreSubcategory/<%= x._id %>" method="post">
+                      <button type="submit" class="btn dropdown-item" onclick="return confirm('Are you sure?')">Restore</button>
+                    </form>
                     <% } %>
                   </div>
                 </td>
