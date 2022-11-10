@@ -1,5 +1,6 @@
 const userHelpers = require("../helpers/user-helpers");
 const { response } = require("express");
+const categoryModel = require("../model/categoryModel");
 
 // SESSION MIDDLEWARE FOR CART, WISHLIST, AND ACCOUNT
 exports.userSession = (req, res, next) => {
@@ -42,10 +43,10 @@ exports.signup = (req, res) => {
 // DO_SIGNUP
 exports.doSignup = async (req, res) => {
   req.session.exist = false;
-
   userHelpers.doSignup(req.body).then((result) => {
-    if (result) {
+    if (result.user) {
       req.session.userLogin = true
+      req.session.user = result.newUser // user data
       res.redirect('/')
     } else {
       req.session.exist = true
@@ -84,7 +85,7 @@ exports.logout = (req, res) => {
 
 // USER ACCOUNT
 exports.account = (req, res) => {
-  res.redirect('/')
+  res.redirect('/') // not ready
 }
 
 // PRODUCT DETAILS
@@ -100,34 +101,54 @@ exports.product_details = async (req, res) => {
   console.log(req.session.userId);
 }
 
-// ADD TO WISHLIST
-exports.addToWishlist = async(req,res) =>{
+// VIEW WISHLIST
+exports.wishlist = (req, res) => {
+  let userId = req.session.user._id
+  userHelpers.wishlist_items(userId).then((list) => {
+    if(list){
+    res.render('userViews/wishlist-page', { login: true, list })
+    }else{
+    res.render('userViews/wishlist-page', { login: true, list:[null] })
 
+    }
+  })
+}
+
+// ADD TO WISHLIST
+exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
   let userId = req.session.user._id    //user id
-  userHelpers.addto_wishlist(userId, productId).then(()=>{
+  userHelpers.addto_wishlist(userId, productId).then(() => {
     res.redirect('/')
   })
 }
 
-// VIEW CART
-exports.cart = async(req,res) =>{
+// REMOVE ITEM FROM WISHLIST
+exports.removeWishlistItem = async(req,res) =>{
+  let productId = req.params.id
   let userId = req.session.user._id
-  userHelpers.cart_items(userId).then(()=>{
-    res.render('userViews/shoping-cart',{login:true})
+  userHelpers.removeWishlistItem(userId,productId).then(()=>{
+    res.redirect('/wishlist')
+  })
+  
+}
+
+// VIEW CART
+exports.cart = async (req, res) => {
+  let userId = req.session.user._id
+  userHelpers.cart_items(userId).then((product) => {
+    res.render('userViews/shoping-cart', { login: true, product })
   })
 }
 
 // ADD TO CART
-exports.addToCart = (req,res) =>{
+exports.addToCart = (req, res) => {
 
   let userId = req.session.user._id
   let productId = req.params.productId
   let quantity = req.body.quantity
 
-  console.log("userId: "+ userId +" prdct "+ productId + " quantity "+quantity);
-
-  userHelpers.addto_cart(userId, productId, quantity).then(()=>{
-    res.redirect('/product_details/'+productId)
+  userHelpers.addto_cart(userId, productId, quantity).then(() => {
+    res.redirect('/product_details/' + productId)
   })
 }

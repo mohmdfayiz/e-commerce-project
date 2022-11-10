@@ -3,6 +3,8 @@ const userModel = require("../model/userModel");
 const cartModel = require("../model/cartModel")
 const wishlistModel = require("../model/wishlistModel")
 const bcrypt = require("bcrypt");
+const { populate } = require("../model/productModel");
+const { response } = require("express");
 
 module.exports = {
 
@@ -23,7 +25,7 @@ module.exports = {
                 userData.password = await bcrypt.hash(userData.password, 10)
                 const newUser = new userModel(userData)
                 newUser.save().then(() => {
-                    resolve(true)
+                    resolve({ user: true, newUser })
                 })
             }
         })
@@ -62,9 +64,20 @@ module.exports = {
         })
     },
 
+    wishlist_items: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let list = await wishlistModel.findOne({ userId: userId }).populate('productIds').then((list) => {
+                if (list) {
+                    resolve(list.productIds)
+                } else {
+                    resolve()
+                }
+            })
+        })
+    },
+
     addto_wishlist: (userId, productId) => {
         return new Promise(async (resolve, reject) => {
-
             let wishlist = await wishlistModel.findOne({ userId: userId })
             if (wishlist) {
                 await wishlistModel.findOneAndUpdate({ userId: userId }, { $push: { productIds: productId } }).then(() => {
@@ -82,14 +95,21 @@ module.exports = {
         })
     },
 
-    cart_items:(userId)=>{
-        return new Promise(async(resolve,reject)=>{
-           let cart = await cartModel.findOne({userId})
-           .then((res)=>{
-            console.log(res);
-            resolve(res)
+    removeWishlistItem: (userId, productId) => {
+        return new Promise(async (resolve, reject) => {
+            await wishlistModel.findOneAndUpdate({ userId }, { $pull: { productIds: productId } }).then((res) => {
+                console.log(res)
+                resolve()
+            })
         })
-            
+    },
+
+    cart_items: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            await cartModel.findOne({ userId }).populate('products').then((cart) => {
+                console.log(cart);
+                resolve()
+            })
         })
     },
 
