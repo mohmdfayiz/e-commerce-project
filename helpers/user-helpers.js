@@ -56,6 +56,15 @@ module.exports = {
         })
     },
 
+    userStatus:(userId)=>{
+        return new Promise (async(resolve,reject)=>{
+            await userModel.findOne({_id:userId}).then((user)=>{
+                let userStatus = user.type
+                resolve(userStatus)
+            })
+        })
+    },
+
     product_details: (id) => {
         return new Promise(async (resolve, reject) => {
             let product = await productModel.findOne({ _id: id }).populate('category')
@@ -98,36 +107,64 @@ module.exports = {
     removeWishlistItem: (userId, productId) => {
         return new Promise(async (resolve, reject) => {
             await wishlistModel.findOneAndUpdate({ userId }, { $pull: { productIds: productId } }).then((res) => {
-                console.log(res)
                 resolve()
             })
         })
     },
 
+    moveToCart: (userId, productId) => {
+        return new Promise(async (resolve, reject) => {
+            let cart = cartModel.findOne({ userId })
+            if (cart) {
+                await cartModel.findOneAndUpdate({ userId: userId }, { $push: { products: { productId } } })
+                resolve()
+            } else {
+                const newCart = new cartModel({
+                    userId: userId,
+                    products: [{ productId, quantity }]
+                })
+                newCart.save().then(() => {
+                    resolve()
+                })
+            }
+        })
+    },
+
     cart_items: (userId) => {
         return new Promise(async (resolve, reject) => {
-            await cartModel.findOne({ userId }).populate('products').then((cart) => {
-                console.log(cart);
-                resolve()
+            await cartModel.findOne({ userId }).populate('products.productId').then((cart) => {
+                if (cart) {
+                    resolve(cart.products)
+                } else {
+                    resolve()
+                }
             })
         })
     },
 
     addto_cart: (userId, productId, quantity) => {
         return new Promise(async (resolve, reject) => {
-            let cart = await cartModel.findOne({ userId: userId })
+            let cart = await cartModel.findOne({ userId })
             if (cart) {
                 await cartModel.findOneAndUpdate({ userId: userId }, { $push: { products: { productId, quantity } } })
                 resolve()
             } else {
                 const newCart = new cartModel({
                     userId: userId,
-                    products: [{ productId: productId, quantity: quantity }]
+                    products: [{ productId, quantity }]
                 })
                 newCart.save().then(() => {
                     resolve()
                 })
             }
+        })
+    },
+
+    removeCartItem: (userId, productId) => {
+        return new Promise(async (resolve, reject) => {
+            await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId } } }).then((cart) => {
+                resolve()
+            })
         })
     }
 }

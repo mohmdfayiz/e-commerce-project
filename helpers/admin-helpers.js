@@ -34,7 +34,7 @@ module.exports = {
 
     getUsers: () => {
         return new Promise(async (resolve, reject) => {
-            let users = await userModel.find({ type: { $not: { $eq: "admin" } } })
+            let users = await userModel.find({ type: { $not: { $eq: "admin" } } }).sort({join:-1})
             resolve(users)
         })
     },
@@ -123,7 +123,7 @@ module.exports = {
 
     getProducts: () => {
         return new Promise(async (resolve, reject) => {
-            let product = await productModel.find({ isDeleted: false }).populate('category')
+            let product = await productModel.find({ isDeleted: false }).populate('category').sort({createdAt:-1})
             resolve(product)
         })
     },

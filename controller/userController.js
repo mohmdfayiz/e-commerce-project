@@ -1,6 +1,5 @@
 const userHelpers = require("../helpers/user-helpers");
 const { response } = require("express");
-const categoryModel = require("../model/categoryModel");
 
 // SESSION MIDDLEWARE FOR CART, WISHLIST, AND ACCOUNT
 exports.userSession = (req, res, next) => {
@@ -10,6 +9,19 @@ exports.userSession = (req, res, next) => {
     res.redirect('/login');
   }
 };
+
+// MIDDLEWARE FOR CHECKING USER IS ACTIVE OR NOT
+exports.userStatus = (req, res, next) => {
+  let userId = req.session.user._id
+  userHelpers.userStatus(userId).then((userStatus)=>{
+    if (userStatus === "Active") {
+      next()
+    } else {
+      req.session.destroy();
+      res.redirect("/");
+    }
+  })
+}
 
 // USER HOME PAGE
 exports.home = async (req, res) => {
@@ -105,10 +117,10 @@ exports.product_details = async (req, res) => {
 exports.wishlist = (req, res) => {
   let userId = req.session.user._id
   userHelpers.wishlist_items(userId).then((list) => {
-    if(list){
-    res.render('userViews/wishlist-page', { login: true, list })
-    }else{
-    res.render('userViews/wishlist-page', { login: true, list:[null] })
+    if (list) {
+      res.render('userViews/wishlist-page', { login: true, list })
+    } else {
+      res.render('userViews/wishlist-page', { login: true, list: [] })
 
     }
   })
@@ -124,20 +136,24 @@ exports.addToWishlist = async (req, res) => {
 }
 
 // REMOVE ITEM FROM WISHLIST
-exports.removeWishlistItem = async(req,res) =>{
+exports.removeWishlistItem = async (req, res) => {
   let productId = req.params.id
   let userId = req.session.user._id
-  userHelpers.removeWishlistItem(userId,productId).then(()=>{
+  userHelpers.removeWishlistItem(userId, productId).then(() => {
     res.redirect('/wishlist')
   })
-  
+
 }
 
 // VIEW CART
 exports.cart = async (req, res) => {
   let userId = req.session.user._id
-  userHelpers.cart_items(userId).then((product) => {
-    res.render('userViews/shoping-cart', { login: true, product })
+  userHelpers.cart_items(userId).then((products) => {
+    if (products) {
+      res.render('userViews/shoping-cart', { login: true, products })
+    } else {
+      res.render('userViews/shoping-cart', { login: true, products: [] })
+    }
   })
 }
 
@@ -150,5 +166,24 @@ exports.addToCart = (req, res) => {
 
   userHelpers.addto_cart(userId, productId, quantity).then(() => {
     res.redirect('/product_details/' + productId)
+  })
+}
+
+// REMOVE CART ITEM
+exports.removeCartItem = (req, res) => {
+  let userId = req.session.user._id
+  let productId = req.params.productId
+  userHelpers.removeCartItem(userId, productId).then(() => {
+    res.redirect('/cart')
+  })
+}
+
+// ADD TO CART FROM WISHLIST
+exports.moveToCart = (req, res) => {
+  let userId = req.session.user._id
+  let productId = req.params.productId
+
+  userHelpers.moveToCart(userId, productId).then(() => {
+    res.redirect('/wishlist')
   })
 }

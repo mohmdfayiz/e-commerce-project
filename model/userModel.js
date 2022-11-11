@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     type:{
         type:String,
         default:'Active'
+    },
+    join:{
+        type:Date,
+        default:Date.now
     }
 })
 
