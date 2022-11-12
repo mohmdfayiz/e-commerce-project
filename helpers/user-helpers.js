@@ -17,17 +17,22 @@ module.exports = {
 
     doSignup: (userData) => {
         return new Promise(async (resolve, reject) => {
-
             let user = await userModel.findOne({ email: userData.email })
             if (user) {
                 resolve(false)
             } else {
-                userData.password = await bcrypt.hash(userData.password, 10)
-                const newUser = new userModel(userData)
-                newUser.save().then(() => {
-                    resolve({ user: true, newUser })
-                })
+                resolve(true)
             }
+        })
+    },
+
+    user_proceed: (userData) => {
+        return new Promise(async (resolve, reject) => {
+            userData.password = await bcrypt.hash(userData.password, 10)
+            const newUser = new userModel(userData)
+            newUser.save().then(() => {
+                resolve({ newUser })
+            })
         })
     },
 
@@ -56,16 +61,16 @@ module.exports = {
         })
     },
 
-    userStatus:(userId)=>{
-        return new Promise (async(resolve,reject)=>{
-            await userModel.findOne({_id:userId}).then((user)=>{
+    userStatus: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            await userModel.findOne({ _id: userId }).then((user) => {
                 let userStatus = user.type
                 resolve(userStatus)
             })
         })
     },
 
-    product_details: (id) => {
+    product_details: (id, userId) => {
         return new Promise(async (resolve, reject) => {
             let product = await productModel.findOne({ _id: id }).populate('category')
             let related_products = await productModel.find().populate('category')
@@ -162,7 +167,7 @@ module.exports = {
 
     removeCartItem: (userId, productId) => {
         return new Promise(async (resolve, reject) => {
-            await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId } } }).then((cart) => {
+            await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId } } }).then(() => {
                 resolve()
             })
         })

@@ -1,4 +1,5 @@
 const userHelpers = require("../helpers/user-helpers");
+const nodemailer = require("nodemailer");
 const { response } = require("express");
 
 // SESSION MIDDLEWARE FOR CART, WISHLIST, AND ACCOUNT
@@ -13,7 +14,7 @@ exports.userSession = (req, res, next) => {
 // MIDDLEWARE FOR CHECKING USER IS ACTIVE OR NOT
 exports.userStatus = (req, res, next) => {
   let userId = req.session.user._id
-  userHelpers.userStatus(userId).then((userStatus)=>{
+  userHelpers.userStatus(userId).then((userStatus) => {
     if (userStatus === "Active") {
       next()
     } else {
@@ -52,20 +53,104 @@ exports.signup = (req, res) => {
   }
 };
 
+// OTP PAGE
+exports.email_vairification = (req, res) => {
+  let status = req.session.resend;
+  let otpErr = req.session.otpErr;
+  res.render('userViews/otp', { email, status, otpErr })
+}
+
+// OTP 
+var otp = Math.random();
+otp = otp * 1000000;
+otp = parseInt(otp);
+var email;
+var userData;
+
+let transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  service: 'Gmail',
+
+  auth: {
+    user: 'rideauthentication@gmail.com',
+    pass: 'ztksvhjupmgmjcwz',
+  }
+});
+
 // DO_SIGNUP
 exports.doSignup = async (req, res) => {
+
   req.session.exist = false;
-  userHelpers.doSignup(req.body).then((result) => {
-    if (result.user) {
-      req.session.userLogin = true
-      req.session.user = result.newUser // user data
-      res.redirect('/')
+  req.session.otpErr = false;
+  req.session.resend = false;
+  userData = req.body;
+
+  userHelpers.doSignup(userData).then((result) => {
+    if (result) {
+
+      res.redirect('/email_varification');
+      email = userData.email;
+      // send mail with defined transport object
+      var mailOptions = {
+        to: email,
+        subject: "Otp for registration: ",
+        html: "<h3>OTP for account verification is </h3>" +
+          "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      });
     } else {
-      req.session.exist = true
+      req.session.exist = true;
       res.redirect('/signup')
     }
   })
 };
+
+// RESEND OTP
+exports.resendOtp = (req, res) => {
+  var mailOptions = {
+    to: email,
+    subject: "Otp for registration is: ",
+    html: "<h3>OTP for account verification is </h3>" +
+      "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    req.session.resend = true;
+    res.redirect('/email_varification');
+  });
+}
+
+// OTP VARIFICATION
+exports.varifyOtp = (req, res) => {
+  if (req.body.otp == otp) {
+    userHelpers.user_proceed(userData).then((result) => {
+      userData = null;
+      console.log(userData +"---------user data");
+      req.session.userLogin = true
+      req.session.user = result.newUser // user data
+      res.redirect('/');
+    })
+  }
+  else {
+    // incorrect otp
+    req.session.otpErr = true;
+    res.redirect('/email_varification');
+  }
+}
 
 // DO_LOGIN
 exports.doLogin = async (req, res) => {
