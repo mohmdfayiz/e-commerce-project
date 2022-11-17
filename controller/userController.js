@@ -1,28 +1,8 @@
 const userHelpers = require("../helpers/user-helpers");
 const nodemailer = require("nodemailer");
 const { response } = require("express");
+const { userProfile } = require("../helpers/user-helpers");
 
-// SESSION MIDDLEWARE FOR CART, WISHLIST, AND ACCOUNT
-exports.userSession = (req, res, next) => {
-  if (req.session.userLogin) {
-    next()
-  } else {
-    res.redirect('/login');
-  }
-};
-
-// MIDDLEWARE FOR CHECKING USER IS ACTIVE OR NOT
-exports.userStatus = (req, res, next) => {
-  let userId = req.session.user._id
-  userHelpers.userStatus(userId).then((userStatus) => {
-    if (userStatus === "Active") {
-      next()
-    } else {
-      req.session.destroy();
-      res.redirect("/");
-    }
-  })
-}
 
 // USER HOME PAGE
 exports.home = async (req, res) => {
@@ -34,6 +14,15 @@ exports.home = async (req, res) => {
     }
   })
 };
+
+// SHOP PAGE
+exports.shop = async (req, res) => {
+  if (req.session.userLogin) {
+    res.render('userViews/shop', { login: true })
+  } else {
+    res.render('userViews/shop', { login: false })
+  }
+}
 
 // USER LOGIN PAGE
 exports.login = (req, res) => {
@@ -139,7 +128,6 @@ exports.varifyOtp = (req, res) => {
   if (req.body.otp == otp) {
     userHelpers.user_proceed(userData).then((result) => {
       userData = null;
-      console.log(userData +"---------user data");
       req.session.userLogin = true
       req.session.user = result.newUser // user data
       res.redirect('/');
@@ -179,35 +167,69 @@ exports.logout = (req, res) => {
   res.redirect("/");
 };
 
-
 // USER ACCOUNT
 exports.account = (req, res) => {
-  res.redirect('/') // not ready
+  let userId = req.session.user._id
+  userHelpers.userProfile(userId).then((result) => {
+    const { user, address } = result;
+    res.render('userViews/profile', { login: true, user, address })
+  })
+}
+
+// USER ADDRESS PAGE
+exports.manageAddress = (req, res) => {
+  let userId = req.session.user._id
+  userHelpers.get_address(userId).then((address) => {
+    address = address.address
+    let user = req.session.user;
+    res.render('userViews/address', { login: true, user, address, index: 1 })
+  })
+}
+
+// ADD NEW ADDRESS
+exports.newAddress = (req, res) => {
+  let userId = req.session.user._id;
+  let address = req.body;
+  userHelpers.newAddress(userId, address).then(() => {
+    res.redirect('/manageAddress')
+  })
+}
+
+// DELETE ADDRESS
+exports.deleteAddress = (req, res) => {
+  let userId = req.session.user._id;
+  let id = req.params.id;
+  userHelpers.deleteAddress(userId, id).then(() => {
+    res.redirect('/manageAddress')
+  })
 }
 
 // PRODUCT DETAILS
 exports.product_details = async (req, res) => {
-  userHelpers.product_details(req.params.id).then((details) => {
-    const { product, related_products } = details
-    if (req.session.userLogin) {
-      res.render('userViews/product-detail', { product, related_products, login: true })
+
+  let userId = 0;
+  let id = req.params.id;
+
+  if (req.session.user) {
+    userId = req.session.user._id
+  }
+
+  userHelpers.product_details(id, userId).then((details) => {
+    const { product, related_products, exist } = details
+
+    if (req.session.user) {
+      res.render('userViews/product-detail', { product, related_products, login: true, exist })
     } else {
-      res.render('userViews/product-detail', { product, related_products, login: false })
+      res.render('userViews/product-detail', { product, related_products, login: false, exist })
     }
   })
-  console.log(req.session.userId);
 }
 
 // VIEW WISHLIST
 exports.wishlist = (req, res) => {
   let userId = req.session.user._id
   userHelpers.wishlist_items(userId).then((list) => {
-    if (list) {
-      res.render('userViews/wishlist-page', { login: true, list })
-    } else {
-      res.render('userViews/wishlist-page', { login: true, list: [] })
-
-    }
+    res.render('userViews/wishlist-page', { login: true, list })
   })
 }
 
@@ -227,15 +249,16 @@ exports.removeWishlistItem = async (req, res) => {
   userHelpers.removeWishlistItem(userId, productId).then(() => {
     res.redirect('/wishlist')
   })
-
 }
 
 // VIEW CART
 exports.cart = async (req, res) => {
   let userId = req.session.user._id
-  userHelpers.cart_items(userId).then((products) => {
-    if (products) {
-      res.render('userViews/shoping-cart', { login: true, products })
+  userHelpers.cart_items(userId).then((cart) => {
+    if (cart) {
+      let products = cart.products
+      let cartTotal = cart.cartTotal
+      res.render('userViews/shoping-cart', { login: true, products, cartTotal })
     } else {
       res.render('userViews/shoping-cart', { login: true, products: [] })
     }
@@ -254,21 +277,62 @@ exports.addToCart = (req, res) => {
   })
 }
 
-// REMOVE CART ITEM
-exports.removeCartItem = (req, res) => {
-  let userId = req.session.user._id
-  let productId = req.params.productId
-  userHelpers.removeCartItem(userId, productId).then(() => {
-    res.redirect('/cart')
-  })
-}
-
 // ADD TO CART FROM WISHLIST
 exports.moveToCart = (req, res) => {
   let userId = req.session.user._id
   let productId = req.params.productId
-
-  userHelpers.moveToCart(userId, productId).then(() => {
+  let quantity = 1;
+  userHelpers.addto_cart(userId, productId, quantity).then(() => {
     res.redirect('/wishlist')
   })
 }
+
+// ICREMENT QUANTITY
+exports.incrementQuantity = (req, res) => {
+  let userId = req.session.user._id
+  let productId = req.params.productId
+  let price = parseInt(req.params.price)
+  userHelpers.incrementQuantity(userId, productId, price).then(() => {
+    res.redirect('/cart')
+  })
+}
+
+// DECREMENT QUANTITY
+exports.decrementQuantity = (req, res) => {
+  let userId = req.session.user._id
+  let productId = req.params.productId
+  let price = parseInt(req.params.price)
+  price = price * -1;
+  userHelpers.decrementQuantity(userId, productId, price).then(() => {
+    res.redirect('/cart')
+  })
+}
+
+// REMOVE CART ITEM
+exports.removeCartItem = (req, res) => {
+  let userId = req.session.user._id
+  let productId = req.params.productId
+  let total = -(req.params.total)
+  userHelpers.removeCartItem(userId, productId, total).then(() => {
+    res.redirect('/cart')
+  })
+}
+
+// CHECKOUT PAGE
+exports.checkout = (req, res) => {
+  let userId = req.session.user._id
+  userHelpers.checkout(userId).then((result) => {
+    let { cart, address } = result;
+    let num = address.address.length - 1
+    let cartTotal = cart.cartTotal
+    let cartItems = cart.products
+    console.log(cartItems);
+    if (num < 0) {
+      address = []
+    } else {
+      address = address.address[num]
+    }
+    res.render('userViews/checkout', { login: true, cartTotal, cartItems, address });
+  })
+}
+

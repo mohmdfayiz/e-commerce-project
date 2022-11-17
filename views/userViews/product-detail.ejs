@@ -64,59 +64,45 @@
 							feugiat.
 						</p>
 
-						<!--  -->
+						<!-- not exist in  -->
 						<div class="p-t-33">
-							
-							<form action="/addToCart/<%=product._id%>" method="post">
+							<% if(exist){ %>
 								<div class="flex-w flex-r-m p-b-10">
 									<div class="size-204 flex-w flex-m respon6-next">
-										<div class="wrap-num-product flex-w m-r-20 m-tb-10">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
-											</div>
-
-											<input class="mtext-104 cl3 txt-center num-product" type="number"
-												name="quantity" value="1">
-
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
-											</div>
-										</div>
-									
-											<button type="submit"
-												class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-												Add to cart
-											</button>
-										
+										<a href="/cart"
+											class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+											Go to cart
+										</a>
 									</div>
 								</div>
-							</form>
-						</div>
+								<% }else{ %>
 
-						<!--  -->
-						<div class="flex-w flex-m p-l-100 p-t-40 respon7">
-							<div class="flex-m bor9 p-r-10 m-r-11">
-								<a href="#"
-									class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
-									data-tooltip="Add to Wishlist">
-									<i class="zmdi zmdi-favorite"></i>
-								</a>
-							</div>
+									<form action="/addToCart/<%=product._id%>" method="post">
+										<div class="flex-w flex-r-m p-b-10">
+											<div class="size-204 flex-w flex-m respon6-next">
+												<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+													<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+														<i class="fs-16 zmdi zmdi-minus"></i>
+													</div>
 
-							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-								data-tooltip="Facebook">
-								<i class="fa fa-facebook"></i>
-							</a>
+													<input class="mtext-104 cl3 txt-center num-product" type="number"
+														name="quantity" value="1">
 
-							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-								data-tooltip="Twitter">
-								<i class="fa fa-twitter"></i>
-							</a>
+													<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+														<i class="fs-16 zmdi zmdi-plus"></i>
+													</div>
+												</div>
 
-							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-								data-tooltip="Google Plus">
-								<i class="fa fa-google-plus"></i>
-							</a>
+												<button type="submit"
+													class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+													Add to cart
+												</button>
+
+											</div>
+										</div>
+									</form>
+
+									<% } %>
 						</div>
 					</div>
 				</div>
@@ -335,44 +321,41 @@
 			<div class="wrap-slick2">
 				<div class="slick2">
 					<% related_products.forEach(function(x){ %>
-						<% if(x.category.parentCategory === product.category.parentCategory){ %>
-						<div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
-							<!-- Block2 -->
-							<div class="block2">
-								<div class="block2-pic hov-img0">
-									<img src="/<%= x.imageUrl%>" alt="IMG-PRODUCT">
+						<% if(x.category.parentCategory===product.category.parentCategory){ %>
+							<div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+								<!-- Block2 -->
+								<div class="block2">
+									<div class="block2-pic hov-img0">
+										<img src="/<%= x.imageUrl%>" alt="IMG-PRODUCT">
 
-									<a href="#"
-										class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-										Quick View
-									</a>
-								</div>
-
-								<div class="block2-txt flex-w flex-t p-t-14">
-									<div class="block2-txt-child1 flex-col-l ">
-										<a href="product-detail.html"
-											class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-											<%= x.productName %>
+										<a href="/product_details/<%= x._id%>"
+											class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+											Quick View
 										</a>
-
-										<span class="stext-105 cl3">
-											<%= x.price %>
-										</span>
 									</div>
 
-									<div class="block2-txt-child2 flex-r p-t-3">
-										<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-											<img class="icon-heart1 dis-block trans-04"
-												src="/public/users/images/icons/icon-heart-01.png" alt="ICON">
-											<img class="icon-heart2 dis-block trans-04 ab-t-l"
-												src="/public/users/images/icons/icon-heart-02.png" alt="ICON">
-										</a>
+									<div class="block2-txt flex-w flex-t p-t-14">
+										<div class="block2-txt-child1 flex-col-l">
+											<a href="product-detail.html"
+												class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+												<%= x.productName %>
+											</a>
+
+											<span class="stext-105 cl3"> $<%= x.price %> </span>
+										</div>
+										<form action="/addToWishlist/<%= x._id %>" method="post">
+											<div class="block2-txt-child2 flex-r p-t-3">
+												<button type="submit">
+													<img class="icon-heart1 dis-block trans-04"
+														src="/public/users/images/icons/icon-heart-01.png" alt="ICON" />
+												</button>
+											</div>
+										</form>
 									</div>
 								</div>
 							</div>
-						</div>
-						<% } %>
-						<% }) %>
+							<% } %>
+								<% }) %>
 				</div>
 			</div>
 		</div>

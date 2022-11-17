@@ -2,7 +2,8 @@
   <!-- Navbar -->
 
   <% if(list.length==0){ %>
-    <div class="text-center" style="height: 80vh;"><div class="mt-md-5"></div>
+    <div class="text-center" style="height: 80vh;">
+      <div class="mt-md-5"></div>
       <img src="/public/images/empty.png" alt="empty-wishlist" class="mt-5">
     </div>
     <% }else{ %>
@@ -13,7 +14,7 @@
           <div class="col-10 m-lr-auto m-b-50 mt-5">
             <div class="m-l-10 m-r--38 m-lr-0-xl">
               <div class="wrap-table-shopping-cart mt-5 mb-5">
-                <table class="table-shopping-cart" >
+                <table class="table-shopping-cart">
                   <tr class="table_head">
                     <th></th>
                     <th>Product</th>
@@ -40,7 +41,8 @@
                       <td>
                         <%=product.description %>
                       </td>
-                      <td>$ <%=product.price %></td>
+                      <td>$ <%=product.price %>
+                      </td>
                       <td>
                         <form action="/addToCart_wishlist/<%= product._id %>" method="post">
                           <button class="bg1 bor1 hov-btn1 stext-101 cl0 size-101" type="submit">Add to cart</button>

@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>404 page not found!</h1>
-    <h4>Please check the url...</h4>
-    <img src="/public/images/page-misc-error-light.png" alt="">
-</body>
-</html>
+<%- include('./layoutHeader.ejs') -%>
+    <!-- Error -->
+    <div class="container-xxl container-p-y">
+        <div class="misc-wrapper">
+          <h2 class="mb-2 mx-2">Page Not Found :(</h2>
+          <p class="mb-4 mx-2">Oops! 😖 The requested URL was not found on this server.</p>
+          <div class="mt-3">
+            <img
+              src="/public/images/page-misc-error-light.png"
+              alt="page-misc-error-light"
+              width="500"
+              class="img-fluid"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- /Error -->
+<%- include('./layoutFooter.ejs') -%>
