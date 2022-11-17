@@ -283,7 +283,7 @@
                             <h5>Address <%= index++ %> </h5>
                             <div class="d-flex justify-content-end">
                             <form action=""><button class="btn-primary p-1">Edit</button></form>
-                            <form action="/deleteAddress/:<%= adrs._id %>" method="post"><button class="btn-danger p-1">Delete</button></form>
+                            <form action="/deleteAddress/<%= adrs._id %>" method="post"><button onclick="return confirm('Are you sure?')" class="btn-danger p-1">Delete</button></form>
                             
                             </div>
                         </div>

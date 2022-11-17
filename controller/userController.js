@@ -1,12 +1,15 @@
-const userHelpers = require("../helpers/user-helpers");
+const authHelpers = require('../helpers/user/authenticationHelpers')
+const productHelpers = require("../helpers/user/productHelpers")
+const cartHelpers = require("../helpers/user/cartHelpers")
+const profileHelpers = require('../helpers/user/profileHelpers')
+const wishlistHelpers = require('../helpers/user/wishlistHelpers')
+const checkoutHelpers = require('../helpers/user/checkoutHelpers')
 const nodemailer = require("nodemailer");
 const { response } = require("express");
-const { userProfile } = require("../helpers/user-helpers");
-
 
 // USER HOME PAGE
-exports.home = async (req, res) => {
-  userHelpers.getProducts().then((products) => {
+exports.home = (req, res) => {
+  productHelpers.getProducts().then((products) => {
     if (req.session.userLogin) {
       res.render("userViews/index", { products, login: true })
     } else {
@@ -14,15 +17,6 @@ exports.home = async (req, res) => {
     }
   })
 };
-
-// SHOP PAGE
-exports.shop = async (req, res) => {
-  if (req.session.userLogin) {
-    res.render('userViews/shop', { login: true })
-  } else {
-    res.render('userViews/shop', { login: false })
-  }
-}
 
 // USER LOGIN PAGE
 exports.login = (req, res) => {
@@ -76,7 +70,7 @@ exports.doSignup = async (req, res) => {
   req.session.resend = false;
   userData = req.body;
 
-  userHelpers.doSignup(userData).then((result) => {
+  authHelpers.doSignup(userData).then((result) => {
     if (result) {
 
       res.redirect('/email_varification');
@@ -126,7 +120,7 @@ exports.resendOtp = (req, res) => {
 // OTP VARIFICATION
 exports.varifyOtp = (req, res) => {
   if (req.body.otp == otp) {
-    userHelpers.user_proceed(userData).then((result) => {
+    authHelpers.user_proceed(userData).then((result) => {
       userData = null;
       req.session.userLogin = true
       req.session.user = result.newUser // user data
@@ -146,7 +140,7 @@ exports.doLogin = async (req, res) => {
   req.session.loginErr = false;
   req.session.passwordErr = false;
 
-  userHelpers.doLogin(req.body).then((response) => {
+  authHelpers.doLogin(req.body).then((response) => {
     if (response.status) {
       req.session.userLogin = true
       req.session.user = response.user // user data
@@ -170,7 +164,7 @@ exports.logout = (req, res) => {
 // USER ACCOUNT
 exports.account = (req, res) => {
   let userId = req.session.user._id
-  userHelpers.userProfile(userId).then((result) => {
+  profileHelpers.userProfile(userId).then((result) => {
     const { user, address } = result;
     res.render('userViews/profile', { login: true, user, address })
   })
@@ -179,8 +173,8 @@ exports.account = (req, res) => {
 // USER ADDRESS PAGE
 exports.manageAddress = (req, res) => {
   let userId = req.session.user._id
-  userHelpers.get_address(userId).then((address) => {
-    address = address.address
+  profileHelpers.get_address(userId).then((address) => {
+    console.log(address);
     let user = req.session.user;
     res.render('userViews/address', { login: true, user, address, index: 1 })
   })
@@ -190,7 +184,7 @@ exports.manageAddress = (req, res) => {
 exports.newAddress = (req, res) => {
   let userId = req.session.user._id;
   let address = req.body;
-  userHelpers.newAddress(userId, address).then(() => {
+  profileHelpers.newAddress(userId, address).then(() => {
     res.redirect('/manageAddress')
   })
 }
@@ -198,8 +192,8 @@ exports.newAddress = (req, res) => {
 // DELETE ADDRESS
 exports.deleteAddress = (req, res) => {
   let userId = req.session.user._id;
-  let id = req.params.id;
-  userHelpers.deleteAddress(userId, id).then(() => {
+  let adrsId = req.params.id;
+  profileHelpers.deleteAddress(userId, adrsId).then(() => {
     res.redirect('/manageAddress')
   })
 }
@@ -214,7 +208,7 @@ exports.product_details = async (req, res) => {
     userId = req.session.user._id
   }
 
-  userHelpers.product_details(id, userId).then((details) => {
+  productHelpers.product_details(id, userId).then((details) => {
     const { product, related_products, exist } = details
 
     if (req.session.user) {
@@ -228,7 +222,7 @@ exports.product_details = async (req, res) => {
 // VIEW WISHLIST
 exports.wishlist = (req, res) => {
   let userId = req.session.user._id
-  userHelpers.wishlist_items(userId).then((list) => {
+  wishlistHelpers.wishlist_items(userId).then((list) => {
     res.render('userViews/wishlist-page', { login: true, list })
   })
 }
@@ -237,7 +231,7 @@ exports.wishlist = (req, res) => {
 exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
   let userId = req.session.user._id    //user id
-  userHelpers.addto_wishlist(userId, productId).then(() => {
+  wishlistHelpers.addto_wishlist(userId, productId).then(() => {
     res.redirect('/')
   })
 }
@@ -246,7 +240,7 @@ exports.addToWishlist = async (req, res) => {
 exports.removeWishlistItem = async (req, res) => {
   let productId = req.params.id
   let userId = req.session.user._id
-  userHelpers.removeWishlistItem(userId, productId).then(() => {
+  wishlistHelpers.removeWishlistItem(userId, productId).then(() => {
     res.redirect('/wishlist')
   })
 }
@@ -254,7 +248,7 @@ exports.removeWishlistItem = async (req, res) => {
 // VIEW CART
 exports.cart = async (req, res) => {
   let userId = req.session.user._id
-  userHelpers.cart_items(userId).then((cart) => {
+  cartHelpers.cart_items(userId).then((cart) => {
     if (cart) {
       let products = cart.products
       let cartTotal = cart.cartTotal
@@ -272,7 +266,7 @@ exports.addToCart = (req, res) => {
   let productId = req.params.productId
   let quantity = req.body.quantity
 
-  userHelpers.addto_cart(userId, productId, quantity).then(() => {
+  cartHelpers.addto_cart(userId, productId, quantity).then(() => {
     res.redirect('/product_details/' + productId)
   })
 }
@@ -282,7 +276,7 @@ exports.moveToCart = (req, res) => {
   let userId = req.session.user._id
   let productId = req.params.productId
   let quantity = 1;
-  userHelpers.addto_cart(userId, productId, quantity).then(() => {
+  cartHelpers.addto_cart(userId, productId, quantity).then(() => {
     res.redirect('/wishlist')
   })
 }
@@ -292,7 +286,7 @@ exports.incrementQuantity = (req, res) => {
   let userId = req.session.user._id
   let productId = req.params.productId
   let price = parseInt(req.params.price)
-  userHelpers.incrementQuantity(userId, productId, price).then(() => {
+  cartHelpers.incrementQuantity(userId, productId, price).then(() => {
     res.redirect('/cart')
   })
 }
@@ -303,7 +297,7 @@ exports.decrementQuantity = (req, res) => {
   let productId = req.params.productId
   let price = parseInt(req.params.price)
   price = price * -1;
-  userHelpers.decrementQuantity(userId, productId, price).then(() => {
+  cartHelpers.decrementQuantity(userId, productId, price).then(() => {
     res.redirect('/cart')
   })
 }
@@ -312,8 +306,8 @@ exports.decrementQuantity = (req, res) => {
 exports.removeCartItem = (req, res) => {
   let userId = req.session.user._id
   let productId = req.params.productId
-  let total = -(req.params.total)
-  userHelpers.removeCartItem(userId, productId, total).then(() => {
+  let total = (req.params.total) * -1
+  cartHelpers.removeCartItem(userId, productId, total).then(() => {
     res.redirect('/cart')
   })
 }
@@ -321,11 +315,16 @@ exports.removeCartItem = (req, res) => {
 // CHECKOUT PAGE
 exports.checkout = (req, res) => {
   let userId = req.session.user._id
-  userHelpers.checkout(userId).then((result) => {
+  checkoutHelpers.checkout(userId).then((result) => {
     let { cart, address } = result;
+
+    let cartTotal = 0;
+    let cartItems = [];
+    if (cart != null) {
+      cartTotal = cart.cartTotal
+      cartItems = cart.products
+    }
     let num = address.address.length - 1
-    let cartTotal = cart.cartTotal
-    let cartItems = cart.products
     console.log(cartItems);
     if (num < 0) {
       address = []
@@ -336,3 +335,16 @@ exports.checkout = (req, res) => {
   })
 }
 
+// PLACE ORDER
+exports.placeOrder = (req, res) => {
+  let adrsId = req.params.adrsId
+  userId = req.session.user._id
+  checkoutHelpers.placeOrder(userId, adrsId).then(() => {
+    res.redirect('/orderSuccess')
+  })
+}
+
+//  ORDER SUCCESS PAGE
+exports.orderSuccess = (req, res) => {
+  res.render('userViews/order-success', { login: true })
+}

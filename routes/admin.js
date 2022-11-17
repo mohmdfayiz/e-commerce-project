@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controller/adminController')
+const middleware = require('../middleware/auth-middlewares')
 
 // GET METHODS
 router.get('/', controller.login)
 router.get('/dashboard', controller.adminHome)
-router.get('/allProducts', controller.adminSession, controller.allProducts)
-router.get('/deletedProducts', controller.adminSession, controller.deletedProducts)
-router.get('/addProduct', controller.adminSession, controller.addProduct)
-router.get('/editProduct/:id', controller.adminSession, controller.editProduct)
-router.get('/allUsers', controller.adminSession, controller.allUsers)
-router.get('/categories', controller.adminSession, controller.categories)
-router.get('/orders', controller.adminSession, controller.orders)
-router.get('/subcategories', controller.adminSession, controller.subcategories)
+router.get('/allProducts', middleware.adminSession, controller.allProducts)
+router.get('/deletedProducts', middleware.adminSession, controller.deletedProducts)
+router.get('/addProduct', middleware.adminSession, controller.addProduct)
+router.get('/editProduct/:id', middleware.adminSession, controller.editProduct)
+router.get('/allUsers', middleware.adminSession, controller.allUsers)
+router.get('/categories', middleware.adminSession, controller.categories)
+router.get('/orders', middleware.adminSession, controller.orders)
+router.get('/subcategories', middleware.adminSession, controller.subcategories)
 
 // POST METHODS
 router.post('/adminLogin', controller.adminLogin)
@@ -25,9 +26,9 @@ router.post('/deleteCategory/:id', controller.deleteCategory)
 router.post('/editProductDetails/:id', controller.editDetails)
 router.post('/blockUser/:id', controller.blockUser)
 router.post('/unblockUser/:id', controller.unblockUser)
-router.post('/addSubcategory',controller.addSubcatergory)
-router.post('/restoreCategory/:id',controller.restoreCategory)
+router.post('/addSubcategory', controller.addSubcatergory)
+router.post('/restoreCategory/:id', controller.restoreCategory)
 router.post('/deleteSubcategory/:id', controller.deleteSubcategory)
-router.post('/restoreSubcategory/:id',controller.restoreSubcategory)
+router.post('/restoreSubcategory/:id', controller.restoreSubcategory)
 
 module.exports = router;

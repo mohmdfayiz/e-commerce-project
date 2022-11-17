@@ -4,15 +4,6 @@ const { populate } = require("../model/productModel");
 const adminHelpers = require('../helpers/admin-helpers');
 const { response } = require("express");
 
-// SESSION MIDDLEWARE
-exports.adminSession = (req, res, next) => {
-  if (req.session.adminLogin) {
-    next();
-  } else {
-    res.redirect("/admin");
-  }
-};
-
 // ADMIN LOGIN PAGE
 exports.login = (req, res) => {
   if (req.session.adminLogin) {

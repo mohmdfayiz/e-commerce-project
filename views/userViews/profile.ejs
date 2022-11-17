@@ -286,33 +286,7 @@
                     style="background-color:rgb(251, 247, 253) ; border-radius: 8px;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                     <div class="m-4">
                         <h4 class="mb-3">Address</h4>
-                        <% if(address.length != 0){ %> 
-                        <form action="" class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="validationDefault01" class="form-label">Full name</label>
-                                <input type="text" name="fullName" value="<%= address.fullName%> " class="form-control" id="validationDefault01" readonly>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="validationDefault02" class="form-label">Phone number</label>
-                                <input type="number" name="phoneNumber" class="form-control" value="<%= address.phoneNumber%>" id="validationDefault02" readonly>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="validationDefaultUsername" class="form-label">Pincode</label>
-                                <div class="input-group">
-                                    <input type="number" name="pincode" class="form-control"
-                                        id="validationDefaultUsername" minlength="6" value="<%= address.pincode%>" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3 ">
-                                <label for="validationDefault03" class="form-label">State</label>
-                                <input type="text" name="state" class="form-control" id="validationDefault03" value="<%= address.state%>" readonly>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="validationDefault04" class="form-label">City</label>
-                                <input type="text" name="city" class="form-control" id="validationDefault03" value="<%= address.city %> " readonly>
-                            </div>
-                        </form>
-                        <% }else{%>
+                        <% if(address == null){ %> 
                             <form action="/newAddress" method="POST" class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="validationDefault01" class="form-label">Full name</label>
@@ -340,6 +314,32 @@
     
                                 <div class="col-12 mb-3">
                                     <button class="btn btn-primary" type="submit">Add Address</button>
+                                </div>
+                            </form>
+                        <% }else{%>
+                            <form action="" class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationDefault01" class="form-label">Full name</label>
+                                    <input type="text" name="fullName" value="<%= address.fullName%> " class="form-control" id="validationDefault01" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationDefault02" class="form-label">Phone number</label>
+                                    <input type="number" name="phoneNumber" class="form-control" value="<%= address.phoneNumber%>" id="validationDefault02" readonly>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationDefaultUsername" class="form-label">Pincode</label>
+                                    <div class="input-group">
+                                        <input type="number" name="pincode" class="form-control"
+                                            id="validationDefaultUsername" minlength="6" value="<%= address.pincode%>" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3 ">
+                                    <label for="validationDefault03" class="form-label">State</label>
+                                    <input type="text" name="state" class="form-control" id="validationDefault03" value="<%= address.state%>" readonly>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationDefault04" class="form-label">City</label>
+                                    <input type="text" name="city" class="form-control" id="validationDefault03" value="<%= address.city %> " readonly>
                                 </div>
                             </form>
                             <% } %> 
