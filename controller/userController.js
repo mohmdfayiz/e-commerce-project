@@ -4,36 +4,79 @@ const cartHelpers = require("../helpers/user/cartHelpers")
 const profileHelpers = require('../helpers/user/profileHelpers')
 const wishlistHelpers = require('../helpers/user/wishlistHelpers')
 const checkoutHelpers = require('../helpers/user/checkoutHelpers')
+const orderHelpers = require('../helpers/user/orderHelpers')
 const nodemailer = require("nodemailer");
 const { response } = require("express");
+const { trusted } = require('mongoose')
 
 // USER HOME PAGE
 exports.home = (req, res) => {
   productHelpers.getProducts().then((products) => {
-    if (req.session.userLogin) {
-      res.render("userViews/index", { products, login: true })
+    const { bikes, accessoriesNgadgets } = products
+    let login = req.session.userLogin ? true : false
+    res.render("userViews/index", { bikes, accessoriesNgadgets, login });
+  })
+};
+
+// BIKES PAGE
+exports.bikes = (req,res) =>{
+  productHelpers.getProducts().then((products)=>{
+    const {bikes, accessoriesNgadgets} = products
+    let login = req.session.userLogin ? true : false
+    res.render('userViews/bikes',{login,bikes})
+  })
+}
+
+// ACCESSORIES PAGE
+exports.accessories = (req,res) =>{
+  productHelpers.getAccessories().then((accessories)=>{
+    console.log(accessories);
+    let login = req.session.userLogin ? true : false
+    res.render('userViews/accessories-page',{login,accessories})
+  })
+}
+
+// GADGETS PAGE
+exports.gadgets = (req,res) =>{
+  productHelpers.getGadgets().then((gadgets)=>{
+    let login = req.session.userLogin ? true : false
+    res.render('userViews/gadgets-page',{login,gadgets})
+  })
+}
+
+// USER LOGIN PAGE
+exports.signin = (req, res) => {
+  let loginErr = req.session.loginErr;
+  let passwordErr = req.session.passwordErr
+  req.session.userLogin ? res.redirect("/") 
+    :res.render("userViews/userLogin", { loginErr, passwordErr });
+};
+
+// DO_LOGIN
+exports.doLogin = async (req, res) => {
+
+  req.session.loginErr = false;
+  req.session.passwordErr = false;
+
+  authHelpers.doLogin(req.body).then((response) => {
+    if (response.status) {
+      req.session.userLogin = true
+      req.session.user = response.user // user data
+      res.redirect('/')
+    } else if (response.passwordErr) {
+      req.session.passwordErr = true
+      res.redirect('/signin')
     } else {
-      res.render("userViews/index", { products, login: false });
+      req.session.loginErr = true
+      res.redirect('/signin')
     }
   })
 };
 
-// USER LOGIN PAGE
-exports.login = (req, res) => {
-  if (req.session.userLogin) {
-    res.redirect("/");
-  } else {
-    res.render("userViews/userLogin", { loginErr: req.session.loginErr, passwordErr: req.session.passwordErr });
-  }
-};
-
 // USER SIGN UP PAGE
 exports.signup = (req, res) => {
-  if (req.session.userLogin) {
-    res.redirect("/");
-  } else {
-    res.render("userViews/signup", { emailExist: req.session.exist });
-  }
+  req.session.userLogin ? res.redirect("/")
+    :res.render("userViews/signup", { emailExist: req.session.exist });
 };
 
 // OTP PAGE
@@ -134,27 +177,6 @@ exports.varifyOtp = (req, res) => {
   }
 }
 
-// DO_LOGIN
-exports.doLogin = async (req, res) => {
-
-  req.session.loginErr = false;
-  req.session.passwordErr = false;
-
-  authHelpers.doLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.userLogin = true
-      req.session.user = response.user // user data
-      res.redirect('/')
-    } else if (response.passwordErr) {
-      req.session.passwordErr = true
-      res.redirect('/login')
-    } else {
-      req.session.loginErr = true
-      res.redirect('/login')
-    }
-  })
-};
-
 // LOGOUT
 exports.logout = (req, res) => {
   req.session.destroy();
@@ -201,21 +223,13 @@ exports.deleteAddress = (req, res) => {
 // PRODUCT DETAILS
 exports.product_details = async (req, res) => {
 
-  let userId = 0;
   let id = req.params.id;
-
-  if (req.session.user) {
-    userId = req.session.user._id
-  }
+  let userId = req.session.user ? req.session.user._id : 0
 
   productHelpers.product_details(id, userId).then((details) => {
     const { product, related_products, exist } = details
-
-    if (req.session.user) {
-      res.render('userViews/product-detail', { product, related_products, login: true, exist })
-    } else {
-      res.render('userViews/product-detail', { product, related_products, login: false, exist })
-    }
+    let login =  req.session.user ? true : false
+    res.render('userViews/product-detail', { product, related_products, login, exist })
   })
 }
 
@@ -231,9 +245,8 @@ exports.wishlist = (req, res) => {
 exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
   let userId = req.session.user._id    //user id
-  wishlistHelpers.addto_wishlist(userId, productId).then(() => {
-    res.redirect('/')
-  })
+  wishlistHelpers.addto_wishlist(userId, productId)
+  res.json({ status: true })
 }
 
 // REMOVE ITEM FROM WISHLIST
@@ -276,9 +289,8 @@ exports.moveToCart = (req, res) => {
   let userId = req.session.user._id
   let productId = req.params.productId
   let quantity = 1;
-  cartHelpers.addto_cart(userId, productId, quantity).then(() => {
-    res.redirect('/wishlist')
-  })
+  cartHelpers.addto_cart(userId, productId, quantity)
+  res.json({ status: true })
 }
 
 // ICREMENT QUANTITY
@@ -325,12 +337,7 @@ exports.checkout = (req, res) => {
       cartItems = cart.products
     }
     let num = address.address.length - 1
-    console.log(cartItems);
-    if (num < 0) {
-      address = []
-    } else {
-      address = address.address[num]
-    }
+    num < 0 ? address = [] : address = address.address[num]
     res.render('userViews/checkout', { login: true, cartTotal, cartItems, address });
   })
 }
@@ -347,4 +354,14 @@ exports.placeOrder = (req, res) => {
 //  ORDER SUCCESS PAGE
 exports.orderSuccess = (req, res) => {
   res.render('userViews/order-success', { login: true })
+}
+
+// TRACK ORDERS PAGE
+exports.orders = (req, res) => {
+  let user = req.session.user
+  let userId = user._id
+
+  orderHelpers.orders(userId).then((orders) => {
+    res.render('userViews/orders', { user, orders })
+  })
 }

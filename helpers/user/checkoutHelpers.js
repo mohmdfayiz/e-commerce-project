@@ -1,7 +1,8 @@
 const { response } = require("express");
 const addressModel = require('../../model/addressModel')
 const cartModel = require("../../model/cartModel")
-const orderModel = require("../../model/orderModel")
+const orderModel = require("../../model/orderModel");
+const productModel = require("../../model/productModel");
 
 module.exports = {
     checkout: (userId) => {
@@ -15,12 +16,15 @@ module.exports = {
     placeOrder: (userId, adrsId) => {
         return new Promise(async (resolve, reject) => {
             let cart = await cartModel.findOne({ userId })
-
+            let total = cart.cartTotal
+            let products = cart.products
             const newOrder = new orderModel({
-                cart: cart._id,
+                userId,
+                products,
+                total,
                 address: adrsId,
-                paymentMethod: "Cash on delivery",
-                orderStatus: "Placed"
+                paymentMethod:"Cash on delivery",
+                orderStatus: "Order Placed"
             })
             newOrder.save().then(async() => {
                 await cartModel.findByIdAndDelete({ _id: cart._id })

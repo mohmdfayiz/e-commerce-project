@@ -15,20 +15,27 @@ const addressSchema = new mongoose.Schema({
         },
         phoneNumber:{
             type:Number,
+            required:true 
+        },
+        address:{
+            type:String,
             required:true
         },
-        pincode:{
-            type:Number,
+        type:{
+            type:String
+        },
+        city:{
+            type:String,
             required:true
         },
         state:{
             type:String,
             required:true
         },
-        city:{
-            type:String,
+        pincode:{
+            type:Number,
             required:true
-        }
+        },
     }]
     
 })

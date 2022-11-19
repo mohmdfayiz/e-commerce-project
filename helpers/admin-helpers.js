@@ -2,8 +2,10 @@ const productModel = require('../model/productModel')
 const userModel = require('../model/userModel')
 const categoryModel = require("../model/categoryModel");
 const subcategoryModel = require("../model/subcategoryModel")
+const orderModel = require('../model/orderModel');
 const bcrypt = require('bcrypt');
 const { login } = require('../controller/adminController');
+const addressModel = require('../model/addressModel');
 
 module.exports = {
 
@@ -128,7 +130,7 @@ module.exports = {
         })
     },
 
-    newProduct: (data, img) => {
+    newProduct: (data, images) => {
         return new Promise(async (resolve, reject) => {
             const { category, productName, description, price, quantity } = data;
             const newProduct = productModel({
@@ -137,7 +139,7 @@ module.exports = {
                 description,
                 price,
                 quantity,
-                imageUrl: img.path,
+                imageUrl: images
             });
 
             await newProduct
@@ -156,13 +158,12 @@ module.exports = {
         })
     },
 
-    editProductDetails: (id, data, img) => {
+    editProductDetails: (id, data, images) => {
         return new Promise(async (resolve, reject) => {
             const { category, productName, description, price, quantity } = data
 
-            if (img) {
-                let image = img;
-                await productModel.findByIdAndUpdate({ _id: id }, { $set: { imageUrl: image.path } })
+            if (images != null) {
+                await productModel.findByIdAndUpdate({ _id: id }, { $set: { imageUrl: images } })
             }
             let details = await productModel.findOneAndUpdate(
                 { _id: id },
@@ -202,7 +203,13 @@ module.exports = {
             await productModel.findByIdAndUpdate({ _id: id }, { $set: { isDeleted: false } })
             resolve()
         })
+    },
+
+    orders: () =>{
+        return new Promise(async(resolve,reject)=>{
+            await orderModel.find().populate('products.productId').then(async(orders)=>{
+                resolve(orders)
+            })
+        })
     }
-
-
 }

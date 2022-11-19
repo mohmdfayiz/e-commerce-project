@@ -7,6 +7,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             await cartModel.findOne({ userId }).populate('products.productId').then((cart) => {
                 if (cart) {
+                    console.log(cart)
                     resolve(cart)
                 } else {
                     resolve()

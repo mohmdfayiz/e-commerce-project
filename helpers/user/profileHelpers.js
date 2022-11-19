@@ -7,14 +7,16 @@ module.exports = {
             let user = await userModel.findById(userId);
             let address = await addressModel.findOne({ userId })
             if (address != null) {
+               if(address.address.length > 0){
                 let num = address.address.length - 1
                 address = address.address[num]
-                resolve({ user, address })
+               }
+               else address = []
             }
             else {
                 address = []
-                resolve({ user, address })
             }
+            resolve({ user, address })
         })
     },
     newAddress: (userId, address) => {

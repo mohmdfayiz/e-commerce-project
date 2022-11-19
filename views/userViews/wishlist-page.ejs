@@ -2,9 +2,9 @@
   <!-- Navbar -->
 
   <% if(list.length==0){ %>
-    <div class="text-center" style="height: 80vh;">
+    <div class="d-flex align-items-center justify-content-center" style="height: 90vh;">
       <div class="mt-md-5"></div>
-      <img src="/public/images/empty.png" alt="empty-wishlist" class="mt-5">
+      <img src="public\images\Wishlist.gif" alt="empty-wishlist" class="mt-5">
     </div>
     <% }else{ %>
       <!-- wishlist -->
@@ -44,9 +44,10 @@
                       <td>$ <%=product.price %>
                       </td>
                       <td>
-                        <form action="/addToCart_wishlist/<%= product._id %>" method="post">
-                          <button class="bg1 bor1 hov-btn1 stext-101 cl0 size-101" type="submit">Add to cart</button>
-                        </form>
+                        <button onclick="wishlistToCart('<%= product._id %>','<%=product.productName %>')"
+                          class="bg1 bor1 hov-btn1 stext-101 cl0 size-101">
+                          Add to cart
+                        </button>
                       </td>
                     </tr>
                     <% }) %>
@@ -58,4 +59,23 @@
         </div>
       </div>
       <% } %>
+
+        <script>
+          function wishlistToCart(productId, productName) {
+            $.ajax({
+              url: 'wishlistToCart/' + productId,
+              method: 'post',
+              success: (response) => {
+                if (response.status) {
+                  Swal.fire({
+                    icon: 'success',
+                    text: productName + ' added to cart.',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                }
+              }
+            })
+          }
+        </script>
         <%- include('../userFooter.ejs') -%>

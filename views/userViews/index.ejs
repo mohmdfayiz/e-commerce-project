@@ -145,76 +145,137 @@
   </div>
 
   <!-- Product -->
-  <section class="bg0 p-t-23 p-b-140">
+  <section class="bg0 p-t-23 p-b-50">
     <div class="container">
       <div class="p-b-10">
         <h3 class="ltext-103 cl5">Bicycle Overview</h3>
       </div>
 
-      <div class="flex-w flex-sb-m p-b-52">
+      <div class="flex-w flex-sb-m p-b-20">
         <div class="flex-w flex-l-m filter-tope-group m-tb-10">
           <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
             All Bicycles
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road bike`">
-            Racing Bikes
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road-bike`">
+            Road Bike
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain bike">
-            Mountain Bikes
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain-bike">
+            Mountain Bike
           </button>
 
-           <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
             Hybrid
           </button>
 
-          <!-- <button
-          class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-          data-filter=".watches"
-        >
-          something
-        </button> -->
         </div>
-        
+
       </div>
       <div class="wrap-slick2">
-				<div class="slick2">
-					<% products.forEach(function(product){ %>
-						<div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
-							<!-- Block2 -->
-							<div class="block2">
+        <div class="slick2">
+          <% bikes.forEach(function(product){ %>
+            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+              <!-- Block2 -->
+              <div class="block2">
                 <div class="block2-pic hov-img0">
-                  <img src="<%= product.imageUrl %>" alt="IMG-PRODUCT" />
-  
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" />
+
                   <a href="/product_details/<%= product._id%>"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                     Quick View
                   </a>
                 </div>
-  
+
+                <div class="block2-txt flex-w flex-t p-t-14">
+                  <div class="block2-txt-child1 flex-col-l">
+                    <a href="/product_details/<%= product._id%>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                      <%= product.productName %>
+                    </a>
+
+                    <span class="stext-105 cl3"> $<%= product.price %> </span>
+                  </div>
+                  
+                  <div class="block2-txt-child2 flex-r p-t-3 js-addwish-b2">
+                    <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
+                      <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
+                        alt="ICON" />
+                    </button>
+                  </div>
+                 
+                </div>
+              </div>
+            </div>
+            <% }) %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg0 p-b-100">
+    <div class="container">
+      <div class="p-b-10">
+        <h3 class="ltext-103 cl5">Accessories & Gadgets</h3>
+      </div>
+
+      <div class="flex-w flex-sb-m p-b-20">
+        <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+            All Bicycles
+          </button>
+
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road-bike`">
+            Road Bike
+          </button>
+
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain-bike">
+            Mountain Bike
+          </button>
+
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
+            Hybrid
+          </button>
+
+        </div>
+
+      </div>
+      <div class="wrap-slick2">
+        <div class="slick2">
+          <% accessoriesNgadgets.forEach(function(product){ %>
+            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+              <!-- Block2 -->
+              <div class="block2">
+                <div class="block2-pic hov-img0">
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" />
+
+                  <a href="/product_details/<%= product._id%>"
+                    class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+                    Quick View
+                  </a>
+                </div>
+
                 <div class="block2-txt flex-w flex-t p-t-14">
                   <div class="block2-txt-child1 flex-col-l">
                     <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                       <%= product.productName %>
                     </a>
-  
+
                     <span class="stext-105 cl3"> $<%= product.price %> </span>
                   </div>
-                  <form action="/addToWishlist/<%= product._id %>" method="post">
-                    <div class="block2-txt-child2 flex-r p-t-3">
-                      <button type="submit">
-                        <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
-                          alt="ICON" />
-                      </button>
-                    </div>
-                  </form>
+                  <!-- <form action="/addToWishlist/" method="post"> -->
+                  <div class="block2-txt-child2 flex-r p-t-3 js-addwish-b2">
+                    <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
+                      <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
+                        alt="ICON" />
+                    </button>
+                  </div>
+                  <!-- </form> -->
                 </div>
               </div>
-						</div>
-						<% }) %>
-				</div>
-			</div>
+            </div>
+            <% }) %>
+        </div>
+      </div>
 
       <!-- Load more -->
       <div class="flex-c-m flex-w w-full p-t-45">
@@ -224,5 +285,32 @@
       </div>
     </div>
   </section>
+
+  <script>
+    function addToWishlist(productId,productName) {
+      $.ajax({
+        url: '/addToWishlist/' + productId,
+        method: 'post',
+        success: (response) => {
+          if (response.status) {
+            Swal.fire({
+
+              icon: 'success',
+              text: productName+' added to wishlist.',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          } else {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Oops...',
+              text: 'Please signin for add to wishlist!',
+            })
+          }
+        }
+      })
+    }
+
+  </script>
 
   <%- include('../userFooter.ejs') -%>

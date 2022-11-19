@@ -14,6 +14,7 @@ router.get('/allUsers', middleware.adminSession, controller.allUsers)
 router.get('/categories', middleware.adminSession, controller.categories)
 router.get('/orders', middleware.adminSession, controller.orders)
 router.get('/subcategories', middleware.adminSession, controller.subcategories)
+router.get('/coupons',middleware.adminSession, controller.coupons)
 
 // POST METHODS
 router.post('/adminLogin', controller.adminLogin)

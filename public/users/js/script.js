@@ -11,9 +11,3 @@
 //         }
 //     })
 // }
-
-let price = document.getElementById("price").value
-let quantity = document.getElementById("quantity").value
-
-let total = price * quantity;
-document.getElementById('total').innerHTML().value = total

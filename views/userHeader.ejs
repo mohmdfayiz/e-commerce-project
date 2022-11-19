@@ -44,6 +44,7 @@
 
   <!-- ajax -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </head>
@@ -53,7 +54,6 @@
 
   <% if(login){ -%>
     <%- include('./userViews/navbar-login.ejs') -%>
-    <%- include('./userViews/wishlist.ejs') -%>
       <% }else{ %>
         <%- include('./userViews/navbar-not-login.ejs') -%>
           <% } %>
