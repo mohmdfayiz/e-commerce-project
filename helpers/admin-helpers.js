@@ -36,7 +36,7 @@ module.exports = {
 
     getUsers: () => {
         return new Promise(async (resolve, reject) => {
-            let users = await userModel.find({ type: { $not: { $eq: "admin" } } }).sort({join:-1})
+            let users = await userModel.find({ type: { $not: { $eq: "admin" } } }).sort({ join: -1 })
             resolve(users)
         })
     },
@@ -87,15 +87,15 @@ module.exports = {
 
     getSubcategories: () => {
         return new Promise(async (resolve, reject) => {
-            let categories = await categoryModel.find({isDeleted:false})
+            let categories = await categoryModel.find({ isDeleted: false })
             let subcategories = await subcategoryModel.find()
             resolve({ categories, subcategories })
         })
     },
 
-    subcategories: ()=>{
-        return new Promise(async(resolve,reject)=>{
-            let categories = await subcategoryModel.find({isDeleted:false})
+    subcategories: () => {
+        return new Promise(async (resolve, reject) => {
+            let categories = await subcategoryModel.find({ isDeleted: false })
             resolve(categories)
         })
     },
@@ -125,17 +125,18 @@ module.exports = {
 
     getProducts: () => {
         return new Promise(async (resolve, reject) => {
-            let product = await productModel.find({ isDeleted: false }).populate('category').sort({createdAt:-1})
+            let product = await productModel.find({ isDeleted: false }).populate('category').sort({ createdAt: -1 })
             resolve(product)
         })
     },
 
     newProduct: (data, images) => {
         return new Promise(async (resolve, reject) => {
-            const { category, productName, description, price, quantity } = data;
+            const { category, productName, shortDescription, description, price, quantity } = data;
             const newProduct = productModel({
                 category,
                 productName,
+                shortDescription,
                 description,
                 price,
                 quantity,
@@ -160,7 +161,7 @@ module.exports = {
 
     editProductDetails: (id, data, images) => {
         return new Promise(async (resolve, reject) => {
-            const { category, productName, description, price, quantity } = data
+            const { category, productName,shortDescription, description, price, quantity } = data
 
             if (images != null) {
                 await productModel.findByIdAndUpdate({ _id: id }, { $set: { imageUrl: images } })
@@ -171,6 +172,7 @@ module.exports = {
                     $set: {
                         category,
                         productName,
+                        shortDescription,
                         description,
                         price,
                         quantity,
@@ -205,9 +207,9 @@ module.exports = {
         })
     },
 
-    orders: () =>{
-        return new Promise(async(resolve,reject)=>{
-            await orderModel.find().populate('products.productId').then(async(orders)=>{
+    orders: () => {
+        return new Promise(async (resolve, reject) => {
+            await orderModel.find().populate('products.productId').then(async (orders) => {
                 resolve(orders)
             })
         })

@@ -6,6 +6,7 @@ const middleware = require('../middleware/auth-middlewares')
 // GET METHODS
 router.get('/', controller.login)
 router.get('/dashboard', controller.adminHome)
+// router.get('/changePassword',controller.changePassword)
 router.get('/allProducts', middleware.adminSession, controller.allProducts)
 router.get('/deletedProducts', middleware.adminSession, controller.deletedProducts)
 router.get('/addProduct', middleware.adminSession, controller.addProduct)

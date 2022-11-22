@@ -1,12 +1,10 @@
-const authHelpers = require('../helpers/user/authenticationHelpers')
 const productHelpers = require("../helpers/user/productHelpers")
 const cartHelpers = require("../helpers/user/cartHelpers")
 const profileHelpers = require('../helpers/user/profileHelpers')
 const wishlistHelpers = require('../helpers/user/wishlistHelpers')
 const checkoutHelpers = require('../helpers/user/checkoutHelpers')
 const orderHelpers = require('../helpers/user/orderHelpers')
-const nodemailer = require("nodemailer");
-const { response } = require("express");
+const { response, json } = require("express");
 const { trusted } = require('mongoose')
 
 // USER HOME PAGE
@@ -19,169 +17,30 @@ exports.home = (req, res) => {
 };
 
 // BIKES PAGE
-exports.bikes = (req,res) =>{
-  productHelpers.getProducts().then((products)=>{
-    const {bikes, accessoriesNgadgets} = products
+exports.bikes = (req, res) => {
+  productHelpers.getProducts().then((products) => {
+    const { bikes, accessoriesNgadgets } = products
     let login = req.session.userLogin ? true : false
-    res.render('userViews/bikes',{login,bikes})
+    res.render('userViews/bikes', { login, bikes })
   })
-}
+};
 
 // ACCESSORIES PAGE
-exports.accessories = (req,res) =>{
-  productHelpers.getAccessories().then((accessories)=>{
-    console.log(accessories);
+exports.accessories = (req, res) => {
+  productHelpers.getAccessories().then((accessories) => {
     let login = req.session.userLogin ? true : false
-    res.render('userViews/accessories-page',{login,accessories})
+    res.render('userViews/accessories-page', { login, accessories })
   })
-}
+};
 
 // GADGETS PAGE
-exports.gadgets = (req,res) =>{
-  productHelpers.getGadgets().then((gadgets)=>{
+exports.gadgets = (req, res) => {
+  productHelpers.getGadgets().then((gadgets) => {
     let login = req.session.userLogin ? true : false
-    res.render('userViews/gadgets-page',{login,gadgets})
-  })
-}
-
-// USER LOGIN PAGE
-exports.signin = (req, res) => {
-  let loginErr = req.session.loginErr;
-  let passwordErr = req.session.passwordErr
-  req.session.userLogin ? res.redirect("/") 
-    :res.render("userViews/userLogin", { loginErr, passwordErr });
-};
-
-// DO_LOGIN
-exports.doLogin = async (req, res) => {
-
-  req.session.loginErr = false;
-  req.session.passwordErr = false;
-
-  authHelpers.doLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.userLogin = true
-      req.session.user = response.user // user data
-      res.redirect('/')
-    } else if (response.passwordErr) {
-      req.session.passwordErr = true
-      res.redirect('/signin')
-    } else {
-      req.session.loginErr = true
-      res.redirect('/signin')
-    }
+    res.render('userViews/gadgets-page', { login, gadgets })
   })
 };
 
-// USER SIGN UP PAGE
-exports.signup = (req, res) => {
-  req.session.userLogin ? res.redirect("/")
-    :res.render("userViews/signup", { emailExist: req.session.exist });
-};
-
-// OTP PAGE
-exports.email_vairification = (req, res) => {
-  let status = req.session.resend;
-  let otpErr = req.session.otpErr;
-  res.render('userViews/otp', { email, status, otpErr })
-}
-
-// OTP 
-var otp = Math.random();
-otp = otp * 1000000;
-otp = parseInt(otp);
-var email;
-var userData;
-
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  service: 'Gmail',
-
-  auth: {
-    user: 'rideauthentication@gmail.com',
-    pass: 'ztksvhjupmgmjcwz',
-  }
-});
-
-// DO_SIGNUP
-exports.doSignup = async (req, res) => {
-
-  req.session.exist = false;
-  req.session.otpErr = false;
-  req.session.resend = false;
-  userData = req.body;
-
-  authHelpers.doSignup(userData).then((result) => {
-    if (result) {
-
-      res.redirect('/email_varification');
-      email = userData.email;
-      // send mail with defined transport object
-      var mailOptions = {
-        to: email,
-        subject: "Otp for registration: ",
-        html: "<h3>OTP for account verification is </h3>" +
-          "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-      });
-    } else {
-      req.session.exist = true;
-      res.redirect('/signup')
-    }
-  })
-};
-
-// RESEND OTP
-exports.resendOtp = (req, res) => {
-  var mailOptions = {
-    to: email,
-    subject: "Otp for registration is: ",
-    html: "<h3>OTP for account verification is </h3>" +
-      "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log(error);
-    }
-    console.log('Message sent: %s', info.messageId);
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    req.session.resend = true;
-    res.redirect('/email_varification');
-  });
-}
-
-// OTP VARIFICATION
-exports.varifyOtp = (req, res) => {
-  if (req.body.otp == otp) {
-    authHelpers.user_proceed(userData).then((result) => {
-      userData = null;
-      req.session.userLogin = true
-      req.session.user = result.newUser // user data
-      res.redirect('/');
-    })
-  }
-  else {
-    // incorrect otp
-    req.session.otpErr = true;
-    res.redirect('/email_varification');
-  }
-}
-
-// LOGOUT
-exports.logout = (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
-};
 
 // USER ACCOUNT
 exports.account = (req, res) => {
@@ -196,7 +55,6 @@ exports.account = (req, res) => {
 exports.manageAddress = (req, res) => {
   let userId = req.session.user._id
   profileHelpers.get_address(userId).then((address) => {
-    console.log(address);
     let user = req.session.user;
     res.render('userViews/address', { login: true, user, address, index: 1 })
   })
@@ -228,7 +86,7 @@ exports.product_details = async (req, res) => {
 
   productHelpers.product_details(id, userId).then((details) => {
     const { product, related_products, exist } = details
-    let login =  req.session.user ? true : false
+    let login = req.session.user ? true : false
     res.render('userViews/product-detail', { product, related_products, login, exist })
   })
 }
@@ -329,25 +187,56 @@ exports.checkout = (req, res) => {
   let userId = req.session.user._id
   checkoutHelpers.checkout(userId).then((result) => {
     let { cart, address } = result;
-
-    let cartTotal = 0;
-    let cartItems = [];
-    if (cart != null) {
-      cartTotal = cart.cartTotal
-      cartItems = cart.products
+    if (cart != null && cart.products.length > 0) {
+      let cartTotal = cart.cartTotal
+      let cartItems = cart.products
+      address = address ? address.address : 0
+      let length = address ? address.length : 0
+      req.body.index ? index = req.body.index : index = length - 1
+      res.render('userViews/checkout', { login: true, cartTotal, cartItems, address, index });
+    } else {
+      res.redirect('/cart')
     }
-    let num = address.address.length - 1
-    num < 0 ? address = [] : address = address.address[num]
-    res.render('userViews/checkout', { login: true, cartTotal, cartItems, address });
   })
 }
 
-// PLACE ORDER
+// CHECKOUT ADD NEW ADDRESS
+exports.chekoutNewAddress = (req, res) => {
+  let userId = req.session.user._id;
+  let address = req.body;
+  profileHelpers.newAddress(userId, address).then(() => {
+    res.redirect('/checkout')
+  })
+}
+
+// PLACE ORDER 
 exports.placeOrder = (req, res) => {
-  let adrsId = req.params.adrsId
-  userId = req.session.user._id
-  checkoutHelpers.placeOrder(userId, adrsId).then(() => {
-    res.redirect('/orderSuccess')
+
+  let userId = req.session.user._id
+  let adrsIndex = req.body['index']   
+  let paymentMethod = req.body['paymentMethod']
+  checkoutHelpers.placeOrder(userId, adrsIndex, paymentMethod).then((response) => {
+    let {orderId, total} = response
+    if (paymentMethod == 'COD') {
+      res.json({codSuccess:true})
+    } else {
+      checkoutHelpers.generateRazorpay(orderId, total).then((response)=>{
+        res.json(response)
+      })
+    }
+  })
+}
+
+// VERIFY PAYMENT
+exports.verifyPayment = (req,res)=>{
+  console.log(req.body);
+  checkoutHelpers.verifyPayment(req.body).then(()=>{
+    console.log(req.body['receipt']);
+    checkoutHelpers.changePaymentStatus(req.body['receipt']).then(()=>{
+      res.json({status:true})
+    })
+  }).catch((err)=>{
+    res.json({status:false})
   })
 }
 

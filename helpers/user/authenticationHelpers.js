@@ -3,14 +3,10 @@ const bcrypt = require("bcrypt");
 
 module.exports = {
 
-    doSignup: (userData) => {
+    userExist: (userData) => {
         return new Promise(async (resolve, reject) => {
             let user = await userModel.findOne({ email: userData.email })
-            if (user) {
-                resolve(false)
-            } else {
-                resolve(true)
-            }
+            user ? resolve(false) : resolve(true)
         })
     },
 
@@ -21,6 +17,14 @@ module.exports = {
             newUser.save().then(() => {
                 resolve({ newUser })
             })
+        })
+    },
+
+    resetPassword: (email,password)=>{
+        return new Promise(async(resolve,reject)=>{
+            password = await bcrypt.hash(password, 10)
+            await userModel.findOneAndUpdate({email},{$set:{password:password}})
+            resolve()
         })
     },
 

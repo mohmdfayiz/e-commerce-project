@@ -16,12 +16,15 @@ const orderSchema = new mongoose.Schema({
         required:true
     },
     address:{
-        type:ObjectId,
-        required:true,
-        ref:'Address'
+        type:Object,
+        required:true
     },
     paymentMethod:{
         type:String,
+    },
+    paymenStatus:{
+        type:String,
+        default:'Pending'
     },
     orderStatus:{
         type:String,

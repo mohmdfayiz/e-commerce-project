@@ -2,26 +2,27 @@
   <!-- Navbar -->
 
   <% if(products.length==0){ %>
-    <div class="text-center">
-      <img src="/public/images/empty-cart-4085814-3385483.jpg" alt="empty-cart" style=" height:100vh;">
+    <div class="d-flex justify-content-center align-items-center " style="height: 100vh;">
+      <img src="/public/images/empty-cart-4085814-3385483.jpg" alt="empty-cart" style=" height:500px">
+
     </div>
     <% }else{ %>
       <!-- Shoping Cart -->
 
-  <!-- breadcrumb -->
-  <div class="m-t-70 d-none d-lg-block"></div>
-	<div class="container ">
-		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-			<a href="/" class="stext-109 cl8 hov-cl1 trans-04">
-				Home
-				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-			</a>
+      <!-- breadcrumb -->
+      <div class="m-t-70 d-none d-lg-block"></div>
+      <div class="container ">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+            Home
+            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+          </a>
 
-			<span class="stext-109 cl4">
-				Shoping Cart
-			</span>
-		</div>
-	</div>
+          <span class="stext-109 cl4">
+            Shoping Cart
+          </span>
+        </div>
+      </div>
       <div class="container bg0 p-t-20 p-b-85 ">
         <div class="row">
           <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -40,7 +41,7 @@
                       <td class="column-1">
                         <form action="/removeCartItem/<%= product.total %>/<%= product.productId._id %>" method="POST">
                           <button type="submit" class="how-itemcart1">
-                            <img src="<%=product.productId.imageUrl%>" alt="IMG" style="width: 60px;" />
+                            <img src="<%=product.productId.imageUrl[0] %>" alt="IMG" style="width: 60px;" />
                           </button>
                         </form>
                       </td>
@@ -52,21 +53,26 @@
                       </td>
                       <td class="column-4">
                         <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                          <form action="/decrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>" method="POST">
-                            <button type="submit" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                          <form action="/decrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>"
+                            method="POST">
+                            <button id="minusbtn" type="submit"
+                              class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                               <i class="fs-16 zmdi zmdi-minus"></i>
                             </button>
                           </form>
                           <input class="mtext-104 cl3 txt-center num-product" type="number" id="quantity"
-                            value="<%= product.quantity %>" readonly/>
-                          <form action="/incrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>" method="POST">
+                            value="<%= product.quantity %>" readonly />
+                          <form action="/incrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>"
+                            method="POST">
                             <button type="submit" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                               <i class="fs-16 zmdi zmdi-plus"></i>
                             </button>
                           </form>
                         </div>
                       </td>
-                      <td class="column-5" id="total"> <%= product.total %> </td>
+                      <td class="column-5" id="total">
+                        <%= product.total %>
+                      </td>
                     </tr>
                     <% }); %>
                 </table>
@@ -100,7 +106,7 @@
 
                 <div class="size-209">
                   <span class="mtext-110 cl2">
-                  <%= cartTotal %> 
+                    <%= cartTotal %>
                   </span>
                 </div>
               </div>
@@ -110,8 +116,10 @@
                 </div>
 
                 <div class="size-209">
-                  <% let  discount = 0.00 %> 
-                  <span class="mtext-110 cl2"> <%= discount %>  </span>
+                  <% let discount=0.00 %>
+                    <span class="mtext-110 cl2">
+                      <%= discount %>
+                    </span>
                 </div>
               </div>
 
@@ -121,7 +129,7 @@
                 </div>
 
                 <div class="size-209 p-t-1">
-                  <span class="mtext-110 cl2">₹ <%= cartTotal - discount %>  </span>
+                  <span class="mtext-110 cl2">₹ <%= cartTotal - discount %> </span>
                 </div>
               </div>
 
@@ -133,4 +141,14 @@
         </div>
       </div>
       <% } %>
+
+        <script>
+          let quantity = document.getElementById("quantity").value;
+          if (quantity == 1) {
+            document.getElementById("minusbtn").disabled = true
+          } else {
+            document.getElementById("minusbtn").disabled = false
+          }
+        </script>
+
         <%- include('../userFooter.ejs') -%>

@@ -157,15 +157,15 @@
             All Bicycles
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road-bike`">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
             Road Bike
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain-bike">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
             Mountain Bike
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="Hybrid">
             Hybrid
           </button>
 
@@ -175,12 +175,12 @@
       <div class="wrap-slick2">
         <div class="slick2">
           <% bikes.forEach(function(product){ %>
-            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 rounded "> 
+              <!--  -->
               <!-- Block2 -->
               <div class="block2">
-                <div class="block2-pic hov-img0">
-                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" />
-
+                <div class="block2-pic hov-img0 ">
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="border"  >
                   <a href="/product_details/<%= product._id%>"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                     Quick View
@@ -296,7 +296,8 @@
             Swal.fire({
 
               icon: 'success',
-              text: productName+' added to wishlist.',
+              title: productName,
+              text: ' added to wishlist.',
               showConfirmButton: false,
               timer: 1500
             })

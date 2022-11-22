@@ -44,12 +44,13 @@ exports.logout = (req, res) => {
 
 // ADMIN HOME PAGE
 exports.adminHome = (req, res) => {
-  if (req.session.adminLogin) {
-    res.render("adminViews/index");
-  } else {
-    res.redirect("/admin");
-  }
+  req.session.adminLogin ? res.render("adminViews/index") : res.redirect("/admin")
 };
+
+// CHANGE PASSWORD PAGE
+// exports.changePassword = (req,res) => {
+//   res.render("adminViews/change-password")
+// }
 
 // ALL USERS
 exports.allUsers = async (req, res) => {
@@ -111,9 +112,8 @@ exports.editProduct = async (req, res) => {
 
 // EDIT PRODUCT
 exports.editDetails = async (req, res) => {
-  const productImages = req.files.length != 0 ? req.files.map((img) => img.filename) : null
-  console.log(productImages);
-  adminHelpers.editProductDetails(req.params.id, req.body, productImages).then((result) => {
+  const productImages = req.files.length != 0 ? req.files.map((img) => img.path) : null
+  adminHelpers.editProductDetails(req.params.id, req.body, productImages).then(() => {
     res.redirect('/admin/allProducts')
   })
 };

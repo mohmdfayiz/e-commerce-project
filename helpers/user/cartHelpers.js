@@ -13,7 +13,7 @@ module.exports = {
                     resolve()
                 }
             })
-        })
+        })   
     },
 
     addto_cart: (userId, productId, quantity) => {
@@ -31,7 +31,7 @@ module.exports = {
                 } else {
                     await cartModel.findOneAndUpdate({ userId }, { $push: { products: { productId, quantity, total } }, $inc: { cartTotal: total } })
                 }
-            } else {
+            } else { 
                 const newCart = new cartModel({
                     userId: userId,
                     products: [{ productId, quantity, total }],
@@ -61,9 +61,10 @@ module.exports = {
 
     removeCartItem: (userId, productId, total) => {
         return new Promise(async (resolve, reject) => {
-            await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId } }, $inc: { cartTotal: total } }).then(() => {
-                resolve()
-            })
+            console.log(userId +" = userId ----- "+ productId+" = productid -------" + total );
+            await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId:productId } }, $inc: { cartTotal: total } }).then(() => {
+            }).catch(err=>console.log(err +"-----------------------------errrrrrrrrrrrorrrrrrrrrr"))
+            resolve()
         })
     },
 }

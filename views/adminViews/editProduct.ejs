@@ -48,6 +48,19 @@
             />
           </div>
           <div class="mb-3">
+            <label class="form-label" for="basic-default-company"
+              >Short description</label
+            >
+            <textarea
+              type="text"
+              name="shortDescription"
+              class="form-control"
+              id="basic-default-company"
+              placeholder="Short note about product"
+              required
+            ><%= product.shortDescription %></textarea>
+          </div>
+          <div class="mb-3">
             <label class="form-label" for="basic-default-message"
               >Description</label
             >
@@ -88,21 +101,25 @@
               pattern="/^\d{4}$/"
             />
           </div>
-          <div>
+
+          <div class="d-flex">
+            <% product.imageUrl.forEach(function(image){ %> 
             <img
-              src="/<%= product.imageUrl %>"
+              src="/<%= image %>"
               alt="Product image"
-              style="height: 80px; width: auto"
+              style="height: 80px; width: auto; margin-right: 3px;"
             />
+            <% }) %> 
           </div>
           <div class="mb-3">
-            <label for="formFile" class="form-label">Image</label>
+            <label for="formFile" class="form-label">Images</label>
             <input
               class="form-control"
               type="file"
               accept="image/png, image/jpeg"
               id="formFile"
               name="image"
+              multiple
             />
           </div>
 

@@ -5,7 +5,7 @@ const session = require("express-session");
 const Mongoose = require("./configuration/connection");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
-const Swal = require('sweetalert2')
+// const Swal = require('sweetalert2')
 
 const app = express();
 

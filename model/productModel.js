@@ -10,10 +10,11 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:[true,'product should have a name']
     },
-    description:{
+    shortDescription:{
         type:String, 
         required:[true,'please add something about product']
     },
+    description:String,
     price:{
         type:Number,
         required:true

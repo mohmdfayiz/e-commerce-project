@@ -2,6 +2,7 @@
 
 
 	<!-- Product Detail -->
+	<div style="height: 20px;" class="d-none d-lg-block"></div>
 	<section class="sec-product-detail bg0 p-t-65 p-b-60 m-t-30">
 		<div class="container">
 			<div class="row">
@@ -36,12 +37,11 @@
 						</h4>
 
 						<span class="mtext-106 cl2">
-							$ <%= product.price %>
+							₹ <%= product.price %>
 						</span>
 
 						<p class="stext-102 cl3 p-t-23">
-							Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare
-							feugiat.
+							<%= product.shortDescription %> <a href="#Description">Read more.</a>
 						</p>
 
 						<!-- not exist in  -->
@@ -86,18 +86,13 @@
 				</div>
 			</div>
 
-			<div class="bor10 m-t-50 p-t-43 p-b-40">
+			<div class="bor10 m-t-50 p-t-43 p-b-40" id="Description">
 				<!-- Tab01 -->
 				<div class="tab01">
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item p-b-10">
 							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
-						</li>
-
-						<li class="nav-item p-b-10">
-							<a class="nav-link" data-toggle="tab" href="#information" role="tab">Additional
-								information</a>
 						</li>
 
 						<li class="nav-item p-b-10">
@@ -111,74 +106,8 @@
 						<div class="tab-pane fade show active" id="description" role="tabpanel">
 							<div class="how-pos2 p-lr-15-md">
 								<p class="stext-102 cl6">
-									Aenean sit amet gravida nisi. Nam fermentum est felis, quis feugiat nunc fringilla
-									sit amet. Ut in blandit ipsum. Quisque luctus dui at ante aliquet, in hendrerit
-									lectus interdum. Morbi elementum sapien rhoncus pretium maximus. Nulla lectus enim,
-									cursus et elementum sed, sodales vitae eros. Ut ex quam, porta consequat interdum
-									in, faucibus eu velit. Quisque rhoncus ex ac libero varius molestie. Aenean tempor
-									sit amet orci nec iaculis. Cras sit amet nulla libero. Curabitur dignissim, nunc nec
-									laoreet consequat, purus nunc porta lacus, vel efficitur tellus augue in ipsum. Cras
-									in arcu sed metus rutrum iaculis. Nulla non tempor erat. Duis in egestas nunc.
+									<%= product.description  %> 
 								</p>
-							</div>
-						</div>
-
-						<!-- - -->
-						<div class="tab-pane fade" id="information" role="tabpanel">
-							<div class="row">
-								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
-									<ul class="p-lr-28 p-lr-15-sm">
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Weight
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												0.79 kg
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Dimensions
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												110 x 33 x 100 cm
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Materials
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												60% cotton
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Color
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												Black, Blue, Grey, Green, Red, White
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Size
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												XL, L, M, S
-											</span>
-										</li>
-									</ul>
-								</div>
 							</div>
 						</div>
 
@@ -276,11 +205,11 @@
 
 		<div class="bg6 flex-c-m flex-w size-302 m-t-73 p-tb-15">
 			<span class="stext-107 cl6 p-lr-25">
-				SKU: JAK-01
+				SKU: RIDE-01
 			</span>
 
 			<span class="stext-107 cl6 p-lr-25">
-				Categories: Jacket, Men
+				Categories: <%= product.category.parentCategory %> > <%= product.category.category %>  
 			</span>
 		</div>
 	</section>
@@ -304,7 +233,7 @@
 								<!-- Block2 -->
 								<div class="block2">
 									<div class="block2-pic hov-img0">
-										<img src="/<%= x.imageUrl%>" alt="IMG-PRODUCT">
+										<img src="/<%= x.imageUrl[0]%>" alt="IMG-PRODUCT">
 
 										<a href="/product_details/<%= x._id%>"
 											class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
