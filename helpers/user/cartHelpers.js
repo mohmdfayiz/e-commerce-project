@@ -63,8 +63,15 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             console.log(userId +" = userId ----- "+ productId+" = productid -------" + total );
             await cartModel.findOneAndUpdate({ userId }, { $pull: { products: { productId:productId } }, $inc: { cartTotal: total } }).then(() => {
-            }).catch(err=>console.log(err +"-----------------------------errrrrrrrrrrrorrrrrrrrrr"))
+            }).catch(err=>console.log(err))
             resolve()
         })
     },
+    
+    deleteCart: (userId) =>{
+        return new Promise(async(resolve,reject)=>{
+            await cartModel.findOneAndDelete({userId})
+            resolve()
+        })
+    }
 }

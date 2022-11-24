@@ -1,132 +1,72 @@
 <%- include('../layoutHeader.ejs') -%>
 
-<!-- Basic Layout -->
-<div class="row d-flex justify-content-center">
-  <div class="col-10 col-md-6">
-    <div class="card my-4">
-      <div
-        class="card-header d-flex justify-content-between align-items-center"
-      >
-        <h5 class="mb-0">Edit Product</h5>
-      </div>
-      <div class="card-body">
-        <form
-          action="/admin/editProductDetails/<%= product._id %>"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <div class="mb-3">
-            <label for="exampleFormControlSelect1" class="form-label"
-              >Category</label
-            >
-            <select
-              name="category"
-              class="form-select"
-              id="exampleFormControlSelect1"
-              aria-label="select One"
-            >
-              <option value="<%= product.category._id %>">
-                <%= product.category.category %>
-              </option>
-              <% categories.forEach(function(data){ %>
-              <option value="<%= data._id %>"><%= data.category %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="basic-default-company"
-              >Product Name</label
-            >
-            <input
-              type="text"
-              name="productName"
-              class="form-control"
-              id="basic-default-company"
-              placeholder="One sixty"
-              value="<%= product.productName %>"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="basic-default-company"
-              >Short description</label
-            >
-            <textarea
-              type="text"
-              name="shortDescription"
-              class="form-control"
-              id="basic-default-company"
-              placeholder="Short note about product"
-              required
-            ><%= product.shortDescription %></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="basic-default-message"
-              >Description</label
-            >
-            <textarea
-              id="basic-default-message"
-              class="form-control"
-              placeholder="Type something about product"
-              name="description"
-              required
-            >
-<%= product.description%></textarea
-            >
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="basic-default-email">Price</label>
-            <div class="input-group input-group-merge">
-              <input
-                type="number"
-                name="price"
-                class="form-control"
-                placeholder="$..."
-                aria-describedby="basic-default-email2"
-                value="<%= product.price %>"
-                required
-                pattern="/^\d{6}$/"
-              />
+  <!-- Basic Layout -->
+  <div class="row d-flex justify-content-center">
+    <div class="col-10 col-md-6">
+      <div class="card my-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Edit Product</h5>
+        </div>
+        <div class="card-body">
+          <form action="/admin/editProductDetails/<%= product._id %>" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="exampleFormControlSelect1" class="form-label">Category</label>
+              <select name="category" class="form-select" id="exampleFormControlSelect1" aria-label="select One">
+                <option value="<%= product.category._id %>">
+                  <%= product.category.category %>
+                </option>
+                <% categories.forEach(function(data){ %>
+                  <option value="<%= data._id %>">
+                    <%= data.category %>
+                  </option>
+                  <% }) %>
+              </select>
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="basic-default-phone">Quantity</label>
-            <input
-              type="number"
-              name="quantity"
-              class="form-control"
-              placeholder="10"
-              value="<%= product.quantity %>"
-              required
-              pattern="/^\d{4}$/"
-            />
-          </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-company">Product Name</label>
+              <input type="text" name="productName" class="form-control" id="basic-default-company"
+                placeholder="One sixty" value="<%= product.productName %>" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-company">Short description</label>
+              <textarea type="text" name="shortDescription" class="form-control" id="basic-default-company"
+                placeholder="Short note about product" required><%= product.shortDescription %></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-message">Description</label>
+              <textarea id="basic-default-message" class="form-control" placeholder="Type something about product"
+                name="description" required>
+                <%= product.description%>
+              </textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-email">Price</label>
+              <div class="input-group input-group-merge">
+                <input type="number" name="price" class="form-control" placeholder="$..."
+                  aria-describedby="basic-default-email2" value="<%= product.price %>" required pattern="/^\d{6}$/" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-phone">Quantity</label>
+              <input type="number" name="quantity" class="form-control" placeholder="10" value="<%= product.quantity %>"
+                required pattern="/^\d{4}$/" />
+            </div>
 
-          <div class="d-flex">
-            <% product.imageUrl.forEach(function(image){ %> 
-            <img
-              src="/<%= image %>"
-              alt="Product image"
-              style="height: 80px; width: auto; margin-right: 3px;"
-            />
-            <% }) %> 
-          </div>
-          <div class="mb-3">
-            <label for="formFile" class="form-label">Images</label>
-            <input
-              class="form-control"
-              type="file"
-              accept="image/png, image/jpeg"
-              id="formFile"
-              name="image"
-              multiple
-            />
-          </div>
+            <div class="d-flex">
+              <% product.imageUrl.forEach(function(image){ %>
+                <img src="/<%= image %>" alt="Product image" style="height: 80px; width: auto; margin-right: 3px;" />
+                <% }) %>
+            </div>
+            <div class="mb-3">
+              <label for="formFile" class="form-label">Images</label>
+              <input class="form-control" type="file" accept="image/png, image/jpeg" id="formFile" name="image"
+                multiple />
+            </div>
 
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<%- include('../layoutFooter.ejs') -%>
+  <%- include('../layoutFooter.ejs') -%>

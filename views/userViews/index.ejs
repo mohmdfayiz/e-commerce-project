@@ -175,12 +175,12 @@
       <div class="wrap-slick2">
         <div class="slick2">
           <% bikes.forEach(function(product){ %>
-            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 rounded "> 
+            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 rounded ">
               <!--  -->
               <!-- Block2 -->
               <div class="block2">
                 <div class="block2-pic hov-img0 ">
-                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="border"  >
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="border">
                   <a href="/product_details/<%= product._id%>"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                     Quick View
@@ -189,20 +189,21 @@
 
                 <div class="block2-txt flex-w flex-t p-t-14">
                   <div class="block2-txt-child1 flex-col-l">
-                    <a href="/product_details/<%= product._id%>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                    <a href="/product_details/<%= product._id%>"
+                      class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                       <%= product.productName %>
                     </a>
 
                     <span class="stext-105 cl3"> $<%= product.price %> </span>
                   </div>
-                  
+
                   <div class="block2-txt-child2 flex-r p-t-3 js-addwish-b2">
                     <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
                       <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
                         alt="ICON" />
                     </button>
                   </div>
-                 
+
                 </div>
               </div>
             </div>
@@ -224,15 +225,15 @@
             All Bicycles
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road-bike`">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road`">
             Road Bike
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain-bike">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain">
             Mountain Bike
           </button>
 
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="">
+          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Hybrid">
             Hybrid
           </button>
 
@@ -242,7 +243,7 @@
       <div class="wrap-slick2">
         <div class="slick2">
           <% accessoriesNgadgets.forEach(function(product){ %>
-            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+            <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 isotope-item <%= product.category.category %>">
               <!-- Block2 -->
               <div class="block2">
                 <div class="block2-pic hov-img0">
@@ -263,7 +264,7 @@
                     <span class="stext-105 cl3"> $<%= product.price %> </span>
                   </div>
                   <!-- <form action="/addToWishlist/" method="post"> -->
-                  <div class="block2-txt-child2 flex-r p-t-3 js-addwish-b2">
+                  <div class="block2-txt-child2 flex-r p-t-3">
                     <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
                       <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
                         alt="ICON" />
@@ -287,14 +288,13 @@
   </section>
 
   <script>
-    function addToWishlist(productId,productName) {
+    function addToWishlist(productId, productName) {
       $.ajax({
         url: '/addToWishlist/' + productId,
         method: 'post',
         success: (response) => {
           if (response.status) {
             Swal.fire({
-
               icon: 'success',
               title: productName,
               text: ' added to wishlist.',

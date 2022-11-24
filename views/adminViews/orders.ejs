@@ -1,78 +1,94 @@
 <%- include('../layoutHeader.ejs') -%>
-<!-- Layout wrapper -->
-<div class="layout-wrapper layout-content-navbar">
-  <div class="layout-container">
-    
-    <!-- Menu -->
-    <%- include("./menu.ejs") -%>
-    <!-- / Menu -->
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
 
-    <!-- Layout container -->
-    <div class="layout-page">
-      <!-- Navbar -->
-      <%- include('./navbar.ejs') -%>
-      <!-- / Navbar -->
+      <!-- Menu -->
+      <%- include("./menu.ejs") -%>
+        <!-- / Menu -->
 
-      <!-- Hoverable Table rows -->
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+          <%- include('./navbar.ejs') -%>
+            <!-- / Navbar -->
 
-      <div class="card mt-4 mx-4">
-        <h5 class="card-header">Orders</h5>
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Shipping Address</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody class="table-border-bottom-0">
-              <% var index = 1 %> 
-              <% orders.forEach(function(order){ %> 
-                <% order.products.forEach(function(product){ %> 
-              <tr>
-                <td><%= index++ %> </td>
-                <td><%= product.productId.productName  %> </td>
-                <td><%= product.quantity %> </td>
-                <td><%= product.total %> </td>
-                <td><%= order.address %> </td>
-                <td><span class="badge bg-label-primary me-1"><%= order.orderStatus %> </span></td>
-                <td>
-                  <div class="dropdown">
-                    <!-- <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                          </button> -->
-                    <div>
-                      <a class="dropdown-item" href=""
-                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                      >
-                      <a class="dropdown-item" href=""
-                        ><i class="bx bx-trash me-1"></i> Delete</a
-                      >
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <% }) %> 
-              <% }) %> 
-            </tbody>
-          </table>
+            <!-- Hoverable Table rows -->
+
+            <div class="card mt-4 mx-4">
+              <h5 class="card-header">Orders</h5>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Order Id</th>
+                      <th>Date</th>
+                      <th>No. of Products</th>
+                      <th>Total</th>
+                      <th>Payment Status</th>
+                      <th>Order Status</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-border-bottom-0">
+                    <% orders.forEach(function(order){ %>
+                      <tr>
+                        <td>
+                          <%= order._id %>
+                        </td>
+                        <td>
+                          <%= moment(order.date).format("LL") %>
+                        </td>
+                        <td>
+                          <%= order.products.length %>
+                        </td>
+                        <td>
+                          <%= order.total %>
+                        </td>
+                        <% if (order.paymentStatus=="Completed" ){ %>
+                          <td><span class="badge bg-label-success me-1">
+                              <%= order.paymentStatus %>
+                            </span></td>
+                          <% }else{ %>
+                            <td><span class="badge bg-label-warning me-1">
+                                <%= order.paymentStatus %>
+                              </span></td>
+                            <% } %>
+                              <td>
+                                <% if(order.orderStatus === "Packed"){ %> 
+                                  <span class="badge bg-label-info me-1">Packed</span>
+                                  <% }else if(order.orderStatus === "Shipped"){ %> 
+                                  <span class="badge bg-label-primary me-1">Shipped</span>
+                                  <% }else if(order.orderStatus === "Delivered"){ %>
+                                  <span class="badge bg-label-success me-1">Delivered</span>
+                                  <% }else if(order.orderStatus === "Cancelled"){ %> 
+                                  <span class="badge bg-label-danger me-1">Cancelled</span>
+                                  <% }else{ %> 
+                                  <span class="badge bg-label-warning me-1">Processing</span>
+                                  <% } %> 
+                              </td>
+                              <td>
+                                <a href="/admin/order/<%= order._id %> " class="btn">
+                                <span class="material-symbols-outlined">info</span>
+                                </a>
+                            </td>
+                      </tr>
+                      <% }) %>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!--/ Hoverable Table rows -->
+
+            <div class="content-backdrop fade"></div>
         </div>
-      </div>
-      <!--/ Hoverable Table rows -->
-
-      <div class="content-backdrop fade"></div>
+        <!-- / Layout page -->
     </div>
-    <!-- / Layout page -->
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
   </div>
+  <!-- / Layout wrapper -->
 
-  <!-- Overlay -->
-  <div class="layout-overlay layout-menu-toggle"></div>
-</div>
-<!-- / Layout wrapper -->
-
-<%- include('../layoutFooter.ejs') -%>
+  <%- include('../layoutFooter.ejs') -%>

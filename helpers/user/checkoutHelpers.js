@@ -11,6 +11,7 @@ var instance = new Razorpay({
 });
 
 module.exports = {
+
     checkout: (userId) => {
         return new Promise(async (resolve, reject) => {
             let cart = await cartModel.findOne({ userId }).populate('products.productId')
@@ -34,10 +35,10 @@ module.exports = {
                 products,
                 total,
                 address,
-                paymentMethod 
+                paymentMethod,
             })
             newOrder.save().then(async() => {
-                await cartModel.findByIdAndDelete({ _id: cart._id })
+                // await cartModel.findByIdAndDelete({ _id: cart._id })
                 let orderId = newOrder._id, total = newOrder.total
                 resolve({orderId, total})
             })
@@ -52,7 +53,6 @@ module.exports = {
                 receipt: "" + orderId,
                 
               },function (err,order) {
-                console.log("New order ", order)
                 resolve(order)
               })
         })
@@ -60,6 +60,7 @@ module.exports = {
 
     verifyPayment:(details)=>{
         return new Promise (async(resolve,reject)=>{
+            console.log(details);
             const crypto = require('crypto')
             let hmac = crypto.createHmac('sha256', 'as4aQXuHoMWnonAaD1p4pv1C')
             hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
@@ -74,7 +75,8 @@ module.exports = {
 
     changePaymentStatus:(orderId)=>{
         return new Promise (async(resolve,reject)=>{
-            orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"Completed"}})
+            console.log(orderId);
+            await orderModel.findOneAndUpdate({_id:orderId},{$set:{paymentStatus:"Completed"}})
             resolve()
         })
     }

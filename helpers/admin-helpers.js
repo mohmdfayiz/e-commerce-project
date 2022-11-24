@@ -209,9 +209,25 @@ module.exports = {
 
     orders: () => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.find().populate('products.productId').then(async (orders) => {
+            await orderModel.find().sort({date:-1}).populate('products.productId').then(async (orders) => {
                 resolve(orders)
             })
         })
-    }
+    },
+
+    orderDetails: (orderId)=>{
+        return new Promise (async(resolve,reject)=>{
+            await orderModel.findById(orderId).populate('products.productId').then((order)=>{
+                resolve(order)
+            })
+        })
+    },
+
+    changeOrderStatus: (orderId, status)=>{
+        return new Promise (async(resolve,reject)=>{
+            await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:status}}).then((response)=>{
+                resolve()
+            })
+        })
+    },
 }

@@ -3,6 +3,7 @@ const { isObjectIdOrHexString } = require("mongoose");
 const { populate } = require("../model/productModel");
 const adminHelpers = require('../helpers/admin-helpers');
 const { response } = require("express");
+const moment = require("moment");
 
 // ADMIN LOGIN PAGE
 exports.login = (req, res) => {
@@ -207,8 +208,23 @@ exports.coupons = (req,res) =>{
 // ORDERS
 exports.orders = (req, res) => {
   adminHelpers.orders().then((orders)=>{
-    console.log(orders);
-    res.render("adminViews/orders",{orders})
+    res.render("adminViews/orders",{orders,moment})
   })
 };
 
+// ORDER DETAILS PAGE
+exports.orderDetails = (req,res) =>{
+  let orderId = req.params.orderId
+  adminHelpers.orderDetails(orderId).then((order)=>{
+    res.render("adminViews/orderDetails",{order,moment})
+  })
+}
+
+// CHANGE ORDER DETAILS
+exports.changeOrderStatus = (req,res) =>{
+  let orderId = req.body.orderId
+  let status = req.body.status
+  adminHelpers.changeOrderStatus(orderId,status).then(()=>{
+    res.json({response:true})
+  })
+}

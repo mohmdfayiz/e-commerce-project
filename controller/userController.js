@@ -6,6 +6,7 @@ const checkoutHelpers = require('../helpers/user/checkoutHelpers')
 const orderHelpers = require('../helpers/user/orderHelpers')
 const { response, json } = require("express");
 const { trusted } = require('mongoose')
+const moment = require("moment")
 
 // USER HOME PAGE
 exports.home = (req, res) => {
@@ -213,14 +214,14 @@ exports.chekoutNewAddress = (req, res) => {
 exports.placeOrder = (req, res) => {
 
   let userId = req.session.user._id
-  let adrsIndex = req.body['index']   
+  let adrsIndex = req.body['index']
   let paymentMethod = req.body['paymentMethod']
   checkoutHelpers.placeOrder(userId, adrsIndex, paymentMethod).then((response) => {
-    let {orderId, total} = response
+    let { orderId, total } = response
     if (paymentMethod == 'COD') {
-      res.json({codSuccess:true})
+      res.json({ codSuccess: true })
     } else {
-      checkoutHelpers.generateRazorpay(orderId, total).then((response)=>{
+      checkoutHelpers.generateRazorpay(orderId, total).then((response) => {
         res.json(response)
       })
     }
@@ -228,29 +229,45 @@ exports.placeOrder = (req, res) => {
 }
 
 // VERIFY PAYMENT
-exports.verifyPayment = (req,res)=>{
-  console.log(req.body);
-  checkoutHelpers.verifyPayment(req.body).then(()=>{
-    console.log(req.body['receipt']);
-    checkoutHelpers.changePaymentStatus(req.body['receipt']).then(()=>{
-      res.json({status:true})
+exports.verifyPayment = (req, res) => {
+  checkoutHelpers.verifyPayment(req.body).then(() => {
+    checkoutHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
+      res.json({ status: true })
     })
-  }).catch((err)=>{
-    res.json({status:false})
+  }).catch((err) => {
+    res.json({ status: false })
   })
 }
 
 //  ORDER SUCCESS PAGE
 exports.orderSuccess = (req, res) => {
   res.render('userViews/order-success', { login: true })
+
+  // delete cart 
+  let userId = req.session.user._id
+  cartHelpers.deleteCart(userId)
 }
 
 // TRACK ORDERS PAGE
 exports.orders = (req, res) => {
-  let user = req.session.user
-  let userId = user._id
-
+  let userId = req.session.user._id
   orderHelpers.orders(userId).then((orders) => {
-    res.render('userViews/orders', { user, orders })
+    res.render('userViews/orders', { orders })
+  })
+}
+
+// ORDER DETAILS PAGE
+exports.orderDetails = (req, res) => {
+  let orderId = req.params.orderId
+  orderHelpers.orderDetails(orderId).then((order) => {
+    res.render('userViews/orderDetails', { order, moment })
+  })
+}
+
+// CANCEL ORDER 
+exports.cancelOrder = (req,res) =>{
+  let orderId = req.params.orderId
+  orderHelpers.cancelOrder(orderId).then(()=>{
+    res.json({response:true})
   })
 }

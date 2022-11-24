@@ -21,6 +21,7 @@ router.get('/manageAddress', middlewares.userAuth, controller.manageAddress);
 router.get('/checkout', middlewares.userAuth, controller.checkout)
 router.get('/orderSuccess', middlewares.userAuth, controller.orderSuccess)
 router.get('/orders',middlewares.userAuth, controller.orders)
+router.get('/orderDetails/:orderId',middlewares.userAuth,controller.orderDetails)
 
 // CHAIN ROUTE
 router.route("/forgotPassword").get(authenticationController.forgotPassword).post(authenticationController.sendOtp)
@@ -47,5 +48,6 @@ router.post('/chekoutNewAddress',controller.chekoutNewAddress)
 router.post('/deleteAddress/:id', controller.deleteAddress)
 router.post('/placeOrder', controller.placeOrder)
 router.post('/verifyPayment', controller.verifyPayment)
+router.post('/cancelOrder/:orderId',controller.cancelOrder)
 
 module.exports = router;
