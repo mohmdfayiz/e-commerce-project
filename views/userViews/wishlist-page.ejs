@@ -25,23 +25,25 @@
                   <% list.forEach(function(product){ %>
                     <tr class="table_row">
                       <td class="column-1">
-                        <form action="/removeWishlistItem/<%=product._id%>" method="post">
-                          <button type="submit">
-                            <div class="how-itemcart1">
-                              <img src="<%=product.imageUrl[0]%>" alt="IMG" style="width: 60px;" />
-                            </div>
-                          </button>
-                        </form>
+                        <div >
+                          <img src="<%=product.imageUrl[0]%>" alt="IMG" style="width: 60px; height: 80px; object-fit: cover;" />
+                        </div>
                       </td>
-                      <td>
-                        <%=product.productName %>
+                      <td class="column-2">
+                       <a class="text-dark" href="/product_details/<%=product._id %>"><%=product.productName %></a> 
                       </td>
-                      <td>$ <%=product.price %>
+                      <td class="column-3">$ <%=product.price %>
                       </td>
-                      <td>
+                      <td class="column-4">
                         <button onclick="wishlistToCart('<%= product._id %>','<%=product.productName %>')"
                           class="bg1 bor1 hov-btn1 stext-101 cl0 size-101">
                           Add to cart
+                        </button>
+                      </td>
+                      <td class="column-5">
+                        <button onclick="removeFromWishlist('<%=product._id%>','<%=product.productName%>')"
+                          class="bg2 bor1 hov-btn1 stext-101 cl0 size-101">
+                          Remove
                         </button>
                       </td>
                     </tr>
@@ -69,6 +71,25 @@
                     showConfirmButton: false,
                     timer: 1500
                   })
+                }
+              }
+            })
+          }
+          function removeFromWishlist(productId, productName) {
+            $.ajax({
+              url: '/removeWishlistItem/' + productId,
+              method: 'post',
+              success: (response) => {
+                if (response.status) {
+                  location.reload();
+                  Swal.fire({
+                    icon: 'success',
+                    title: productName,
+                    text: 'Removed from wishlist.',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                  window.reload()
                 }
               }
             })

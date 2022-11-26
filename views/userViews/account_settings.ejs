@@ -76,6 +76,9 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../public/admin/js/config.js"></script>
+
+    <!-- ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
@@ -232,29 +235,29 @@
             </ul>
         </div>
     </header>
-
     <div class="d-none d-lg-block" style="height:100px;"></div>
     <section>
-        <div class="container ">
+        <div class="container">
             <div class="row"
                 style="background-image: linear-gradient(to right,#696cff,#9697f8) ;border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
                 <div class="col-8 d-flex align-items-center">
-                    <span class="text-light material-symbols-outlined mt-2">location_on</span>
-                    <h4 class="ps-1 mt-2 text-light">Address</h4>
+                    <span class="text-light material-symbols-outlined mt-1"
+                        style="font-size: 30px;">manage_accounts</span>
+                    <h4 class="ps-1 mt-2 text-light">Settings</h4>
                 </div>
                 <div class="col-4 d-flex align-items-center justify-content-end">
                     <a href="/orders" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top"
-                        data-bs-html="true" title="<span>Orders</span>" class="mt-3 p-3"><span
-                            class="material-symbols-outlined text-light ">
+                        data-bs-html="true" title="<span>Orders</span>" class="mt-3 p-3 text-light"><span
+                            class="material-symbols-outlined text-light">
                             inventory_2
                         </span></a>
-                    <a href="" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true"
-                        title="<span>Address</span>" class="mt-3 p-3"><span
-                            class="text-light material-symbols-outlined">
+                    <a href="/manageAddress" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top"
+                        data-bs-html="true" title="<span>Address</span>" class="mt-3 p-3"><span
+                            class=" material-symbols-outlined text-light">
                             location_on
                         </span></a>
                     <a href="/accountSettings" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top"
-                        data-bs-html="true" title="<span>Account Settings</span>" class="mt-3 p-3 "><span
+                        data-bs-html="true" title="<span>Account Settings</span>" class="mt-3 p-3"><span
                             class="text-light material-symbols-outlined" style="font-size: 28px;">
                             manage_accounts
                         </span></a>
@@ -263,193 +266,77 @@
         </div>
     </section>
 
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <button class="btn btn-primary mt-3" type="button" data-toggle="collapse"
-                        data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        Add new address
-                    </button>
-                    <div class="collapse" id="collapseExample">
-                        <div class="card card-body">
-                            <div class="col-11  ml-lg-5 p-4">
-                                <form action="/newAddress" method="POST" class="row mt-4">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="validationDefault01" class="form-label">Full name</label>
-                                        <input type="text" name="fullName" class="form-control" id="validationDefault01"
-                                            required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="validationDefault02" class="form-label">Phone number</label>
-                                        <input type="number" name="phoneNumber" class="form-control"
-                                            id="validationDefault02" required>
-                                    </div>
-                                    <div class="col-md-9 mb-3">
-                                        <label for="validationDefault02" class="form-label">Address</label>
-                                        <input type="text" name="address" class="form-control" id="validationDefault02"
-                                            required>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <label for="validationDefault02" class="form-label">Type</label>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="type" id="inlineRadio1"
-                                                value="Home">
-                                            <label class="form-check-label" for="inlineRadio1">Home</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="type" id="inlineRadio2"
-                                                value="Office">
-                                            <label class="form-check-label" for="inlineRadio2">Office</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="validationDefault04" class="form-label">City</label>
-                                        <input type="text" name="city" class="form-control" id="validationDefault03"
-                                            required>
-                                    </div>
-                                    <div class="col-md-4 mb-3 ">
-                                        <label for="validationDefault03" class="form-label">State</label>
-                                        <select name="state" id="state" class="form-control" required>
-                                            <option value="">Select one</option>
-                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands
-                                            </option>
-                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                            <option value="Assam">Assam</option>
-                                            <option value="Bihar">Bihar</option>
-                                            <option value="Chandigarh">Chandigarh</option>
-                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                            <option value="Delhi">Delhi</option>
-                                            <option value="Lakshadweep">Lakshadweep</option>
-                                            <option value="Puducherry">Puducherry</option>
-                                            <option value="Goa">Goa</option>
-                                            <option value="Gujarat">Gujarat</option>
-                                            <option value="Haryana">Haryana</option>
-                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                            <option value="Jharkhand">Jharkhand</option>
-                                            <option value="Karnataka">Karnataka</option>
-                                            <option value="Kerala">Kerala</option>
-                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                            <option value="Maharashtra">Maharashtra</option>
-                                            <option value="Manipur">Manipur</option>
-                                            <option value="Meghalaya">Meghalaya</option>
-                                            <option value="Mizoram">Mizoram</option>
-                                            <option value="Nagaland">Nagaland</option>
-                                            <option value="Odisha">Odisha</option>
-                                            <option value="Punjab">Punjab</option>
-                                            <option value="Rajasthan">Rajasthan</option>
-                                            <option value="Sikkim">Sikkim</option>
-                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                            <option value="Telangana">Telangana</option>
-                                            <option value="Tripura">Tripura</option>
-                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                            <option value="Uttarakhand">Uttarakhand</option>
-                                            <option value="West Bengal">West Bengal</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="validationDefaultUsername" class="form-label">Pincode</label>
-                                        <div class="input-group">
-                                            <input type="number" name="pincode" class="form-control"
-                                                id="validationDefaultUsername" minlength="6" required>
-                                        </div>
-                                    </div>
+    <section class="container my-5">
+        <div class="row d-flex justify-content-around align-items-center">
 
-                                    <div class="col-12 ">
-                                        <button class="btn btn-primary" type="submit">Submit</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6 p-3"
+                style="background-color:#f5f5f5 ; border-radius: 8px;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+                <strong>Personal data</strong>
+                <form class="mt-3" id="personalData">
+                    <label for="userName" class="form-label">User Name</label>
+                    <input type="text" class="form-control mb-3" value="<%= user.userName %>" name="userName">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control mb-3" value="<%= user.email %>" name="email">
+                    <button id="savebtn" class="btn btn-outline-success col-12">Save</button>
+                </form>
+            </div>
+
+            <div class="col-md-4 p-3 mt-4 mt-md-0" id="pswrd"
+                style="background-color:#f5f5f5 ; border-radius: 8px;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+                <strong>Change Password</strong>
+                <label for="inputPassword5" class="form-label mt-3">New Password</label>
+                <input type="text" id="password1" class="form-control mb-3" name="password1" required>
+                <label for="inputPassword5" class="form-label">Confirm Password</label>
+                <input type="password" id="password2" class="form-control mb-3" name="password2" required>
+                <label id="errMsg" class="text-danger"></label>
+                <button onclick="changePassword()" class="btn btn-outline-success col-12">Change Password</button>
             </div>
         </div>
     </section>
-    <section>
-        <div class="container" id="address">
-            <div class="row my-4">
-                <% address.forEach((adrs,index)=> { %>
-                    <div class="col-12 col-md-6 mt-2">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong>Address <%= index+1 %></strong>
-                                <div class="d-flex justify-content-end">
-                                    <a href="/editAddress/<%= index %>" class="btn-primary p-1">Edit</a>
-                                    <button onclick="deleteAddress('<%= adrs._id %>')"
-                                        class="btn-danger p-1">Delete</button>
-
-                                </div>
-                            </div>
-                            <div class="table-responsive text-nowrap">
-                                <table class="table">
-                                    <tbody class="table-border-bottom-0">
-                                        <tr>
-                                            <td><strong>Full Name</strong></td>
-                                            <td>
-                                                <%= adrs.fullName %>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Phone Number</strong></td>
-                                            <td>
-                                                <%= adrs.phoneNumber %>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><Strong>Address</Strong></td>
-                                            <td>
-                                                <%= adrs.address %> <br>
-                                                    <%= adrs.city %>, <%= adrs.state %> - <%= adrs.pincode %>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><Strong>Type</Strong></td>
-                                            <td>
-                                                <%= adrs.type %>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <% }); %>
-            </div>
-        </div>
-    </section>
-
     <script>
-        function deleteAddress(adrsId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/deleteAddress/' + adrsId,
-                        method: 'post',
-                        success: (response) => {
-                            if (response) {
-                                $("#address").load(" #address > *");
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Your Address has been deleted.',
-                                    'success'
-                                )
-                            }
-                        }
-                    })
+
+        $("#personalData").submit(function (event) {
+            event.preventDefault();
+            var data = $("#personalData").serialize()
+            $.ajax({
+                url: "/accountSettings",
+                method: "POST",
+                data: data,
+                success: (response) => {
+                    if (response.status) {
+                        $("#personalData").load(" #personalData > *");
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'Profile Updated Successfully.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
                 }
             })
+        })
+        function changePassword() {
+            let password1 = document.getElementById("password1").value;
+            let password2 = document.getElementById("password2").value;
+            password1 == password2 ?
+                $.ajax({
+                    url: "/accountSettings",
+                    data: {
+                        password1
+                    },
+                    method: "PATCH",
+                    success: (response) => {
+                        if (response.status) {
+                            $("#pswrd").load(" #pswrd > *");
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Password Updated successfully.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    }
+                }) : document.getElementById("errMsg").innerHTML = "Password do not match!"
         }
     </script>
-
     <%- include('../userFooter.ejs') -%>

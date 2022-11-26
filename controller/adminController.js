@@ -99,7 +99,7 @@ exports.newProduct = async (req, res) => {
   console.log(productImages);
 
   adminHelpers.newProduct(data, productImages).then(() => {
-    res.redirect("/admin/addProduct");
+    res.redirect("back");
   })
 };
 

@@ -24,3 +24,9 @@
     line-height: 40px;
     width: 0px;
   }
+
+  .img-frame{
+    height: 320px;
+    width: 270px;
+    object-fit: cover;
+  }

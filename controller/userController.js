@@ -7,13 +7,18 @@ const orderHelpers = require('../helpers/user/orderHelpers')
 const { response, json } = require("express");
 const { trusted } = require('mongoose')
 const moment = require("moment")
+const addressModel = require("../model/addressModel")
+const userModel = require("../model/userModel")
 
 // USER HOME PAGE
 exports.home = (req, res) => {
   productHelpers.getProducts().then((products) => {
     const { bikes, accessoriesNgadgets } = products
-    let login = req.session.userLogin ? true : false
-    res.render("userViews/index", { bikes, accessoriesNgadgets, login });
+    req.session.userLogin ?
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+        res.render("userViews/index", { bikes, accessoriesNgadgets, wishlistItems, login: true })
+      })
+      : res.render("userViews/index", { bikes, accessoriesNgadgets, login: false })
   })
 };
 
@@ -52,12 +57,27 @@ exports.account = (req, res) => {
   })
 }
 
+// ACCOUNT SETTINGS
+exports.accountSettings = (req, res) => {
+  let userId = req.session.user._id
+  profileHelpers.getUser(userId).then((user) => {
+    res.render('userViews/account_settings', { user, login: true })
+  })
+}
+
+// EDIT PROFILE
+exports.editProfile = (req, res) => {
+  let userId = req.session.user._id
+  profileHelpers.editProfile(userId, req.body).then(() => {
+    res.json({status:true})
+  })
+}
+
 // USER ADDRESS PAGE
 exports.manageAddress = (req, res) => {
   let userId = req.session.user._id
   profileHelpers.get_address(userId).then((address) => {
-    let user = req.session.user;
-    res.render('userViews/address', { login: true, user, address, index: 1 })
+    res.render('userViews/address', { login: true, address })
   })
 }
 
@@ -66,6 +86,26 @@ exports.newAddress = (req, res) => {
   let userId = req.session.user._id;
   let address = req.body;
   profileHelpers.newAddress(userId, address).then(() => {
+    res.redirect('back')
+  })
+}
+
+// EDIT ADDRESS PAGE
+exports.editAddress = (req, res) => {
+  let index = req.params.index;
+  let userId = req.session.user._id
+  profileHelpers.address(userId, index).then((address) => {
+    res.render('userViews/editAddress', { address, index, login: true })
+  })
+}
+
+// EDIT ADDRESS
+exports.edit_address = (req, res) => {
+  let adrsId = req.params.index
+  let userId = req.session.user._id
+  let address = req.body
+  console.log(address);
+  profileHelpers.edit_address(userId, adrsId, address).then(() => {
     res.redirect('/manageAddress')
   })
 }
@@ -104,7 +144,7 @@ exports.wishlist = (req, res) => {
 exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
   let userId = req.session.user._id    //user id
-  wishlistHelpers.addto_wishlist(userId, productId)
+  await wishlistHelpers.addto_wishlist(userId, productId)
   res.json({ status: true })
 }
 
@@ -112,9 +152,8 @@ exports.addToWishlist = async (req, res) => {
 exports.removeWishlistItem = async (req, res) => {
   let productId = req.params.id
   let userId = req.session.user._id
-  wishlistHelpers.removeWishlistItem(userId, productId).then(() => {
-    res.redirect('/wishlist')
-  })
+  await wishlistHelpers.removeWishlistItem(userId, productId)
+  res.json({ status: true })
 }
 
 // VIEW CART
@@ -201,15 +240,6 @@ exports.checkout = (req, res) => {
   })
 }
 
-// CHECKOUT ADD NEW ADDRESS
-exports.chekoutNewAddress = (req, res) => {
-  let userId = req.session.user._id;
-  let address = req.body;
-  profileHelpers.newAddress(userId, address).then(() => {
-    res.redirect('/checkout')
-  })
-}
-
 // PLACE ORDER 
 exports.placeOrder = (req, res) => {
 
@@ -265,9 +295,9 @@ exports.orderDetails = (req, res) => {
 }
 
 // CANCEL ORDER 
-exports.cancelOrder = (req,res) =>{
+exports.cancelOrder = (req, res) => {
   let orderId = req.params.orderId
-  orderHelpers.cancelOrder(orderId).then(()=>{
-    res.json({response:true})
+  orderHelpers.cancelOrder(orderId).then(() => {
+    res.json({ response: true })
   })
 }

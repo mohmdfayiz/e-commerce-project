@@ -1,11 +1,17 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+dotenv.config({path:'./config.env'})
 
-mongoose.connect('mongodb://localhost:27017/Ride')
+const db = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
+
+mongoose.connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    // userCreateIndex: true
+})
 
 mongoose.connection
 .once("open",()=>console.log("data base connected successfully"))
 .on("error",error =>{
     console.log("error:",error); 
 })
-
-// RErHzzUjxuUo94uA = password

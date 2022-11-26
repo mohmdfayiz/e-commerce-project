@@ -7,7 +7,7 @@ exports.getProducts = () => {
         let bikes = []
         let accessoriesNgadgets = []
         products.forEach(product => {
-            if (product.category.parentCategory === 'Bicycle') {
+            if (product.category.parentCategory === 'Bike') {
                 bikes.push(product)
             } else {
                 accessoriesNgadgets.push(product)

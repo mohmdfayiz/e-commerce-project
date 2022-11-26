@@ -28,6 +28,15 @@ module.exports = {
         })
     },
 
+    updatePassword:(userId,password)=>{
+        return new Promise(async(resolve,reject)=>{
+            password = await bcrypt.hash(password,10)
+            await userModel.findOneAndUpdate({_id:userId},{$set:{password}}).then(()=>{
+                resolve()
+            })
+        })
+    },
+
     doLogin: (userData) => {
         return new Promise(async (resolve, reject) => {
             let response = {}
