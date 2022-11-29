@@ -81,6 +81,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body>
@@ -89,285 +93,137 @@
         html {
             overflow-x: hidden;
         }
+
+        th {
+            text-align: center;
+        }
     </style>
-    <header>
-        <!-- Header desktop -->
-        <div class="container-menu-desktop">
-            <!-- Topbar -->
-            <div class="top-bar">
-                <div class="content-topbar flex-sb-m h-full container">
-                    <div class="left-top-bar">
-                        Free shipping for standard order over $5000
-                    </div>
 
-                    <div class="right-top-bar flex-w h-full">
-
-                        <form action="/logout" method="post">
-                            <button class="flex-c-m trans-04 p-lr-25" type="submit" style="color: grey; margin: 10px">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="wrap-menu-desktop">
-                <nav class="limiter-menu-desktop container">
-                    <!-- Logo desktop -->
-                    <a href="/" class="logo">
-                        <img src="/public/admin/img/favicon/favicon.ico" alt="IMG-LOGO" />
-                        <h2 style="color: #566a7f; font-weight: bold">ride.</h2>
-                    </a>
-
-                    <!-- Menu desktop -->
-                    <div class="menu-desktop">
-                        <ul class="main-menu">
-                            <li class="active-menu">
-                                <a href="/">Home</a>
-                            </li>
-
-                            <li>
-                                <a href="#">Shop</a>
-                            </li>
-
-                            <li>
-                                <a href="#">Bikes</a>
-                            </li>
-
-                            <li>
-                                <a href="#">Accessories</a>
-                            </li>
-                            <li>
-                                <a href="#">Gadgets</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Icon header -->
-                    <div class="wrap-icon-header flex-w flex-r-m">
-                        <div class="search-box">
-                            <input class="search-text" type="text" name="" placeholder="Type to search" />
-                            <span
-                                class="material-symbols-outlined search-btn icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
-                                search
-                            </span>
-                        </div>
-
-                        <a href="/wishlist" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 ">
-                            <span class="material-symbols-outlined ">
-                                favorite
-                            </span>
-                        </a>
-
-                        <a href="/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
-                            <span class="material-symbols-outlined"> shopping_cart </span>
-                        </a>
-                        <a href="/account">
-                            <span class="material-symbols-outlined icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                                style="font-size: 28px">
-                                person
-                            </span>
-                        </a>
-
-                        <!-- <a
-                  href="#"
-                  class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti">
-                  <i class="zmdi zmdi-favorite-outline"></i>
-                </a> -->
-                    </div>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Header Mobile -->
-        <div class="wrap-header-mobile">
-            <!-- Logo moblie -->
-            <div class="logo-mobile">
-                <a href="/"><img src="/public/admin/img/favicon/favicon.ico" alt="IMG-LOGO" /></a>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m m-r-15">
-                <div class="search-box">
-                    <input class="search-text" type="text" name="" placeholder="Type to search" />
-
-                    <span
-                        class="material-symbols-outlined search-btn icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
-                        search
-                    </span>
-                </div>
-
-                <span class="material-symbols-outlined icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-cart">
-                    shopping_cart
-                </span>
-
-                <span class="material-symbols-outlined icon-header-item cl2 hov-cl1 trans-04 p-r-11"
-                    style="font-size: 28px">
-                    person
-                </span>
-            </div>
-
-            <!-- Button show menu -->
-            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Menu Mobile -->
-        <div class="menu-mobile">
-            <ul class="main-menu-m">
-                <li>
-                    <a href="/">Home</a>
-                </li>
-
-                <li>
-                    <a href="">Bicycles</a>
-                </li>
-
-                <li>
-                    <a href="">Accessories</a>
-                </li>
-
-                <li>
-                    <a href="#">Gadgets</a>
-                </li>
-
-                <li>
-                    <a href="#">About</a>
-                </li>
-            </ul>
-        </div>
-        <!-- Modal Search -->
-        <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
-            <div class="container-search-header">
-                <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-                    <img src="images/icons/icon-close2.png" alt="CLOSE" />
-                </button>
-
-                <form class="wrap-search-header flex-w p-l-15">
-                    <button class="flex-c-m trans-04">
-                        <i class="zmdi zmdi-search"></i>
-                    </button>
-                    <input class="plh3" type="text" name="search" placeholder="Search..." />
-                </form>
-            </div>
-        </div>
-    </header>
-    <div class="d-none d-lg-block" style="height:100px;"></div>
-    <section>
-        <div class="container">
-            <div class="row"
-                style="background-image: linear-gradient(to right,#696cff,#9697f8) ;border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
-                <div class="col-8 d-flex align-items-center">
-                    <span class="material-symbols-outlined text-light mt-2"> inventory_2</span>
-                    <h4 class="ps-1 mt-2 text-light">Order</h4>
-                </div>
-                <div class="col-4 d-flex align-items-center justify-content-end">
-                    <a href="/orders" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true"
-                        title="<span>Orders</span>" class="mt-3 p-3 text-light"><span
-                            class="material-symbols-outlined text-light">
-                            inventory_2
-                        </span></a>
-                    <a href="/manageAddress" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top"
-                        data-bs-html="true" title="<span>Address</span>" class="mt-3 p-3"><span
-                            class=" material-symbols-outlined text-light">
-                            location_on
-                        </span></a>
-                    <a href="/changePassword" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top"
-                        data-bs-html="true" title="<span>Change Password</span>" class="mt-3 p-3"><span
-                            class="material-symbols-outlined text-light">
-                            lock_open
-                        </span></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="container">
-        <div class="row">
+    <section class="container mt-5">
+        <div id="invoice" class="border py-5 px-4">
             <div class="row">
-                <div class="col box p-4">
-                    <table class="table">
-                        <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                        <% order.products.forEach(function(product){ %>
+                <div class="col-6 d-flex align-items-center">
+                    <img src="/public/admin/img/favicon/favicon.ico" width="40px" alt="">
+                    <h2><strong>ride.</strong></h4>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="row">
+                    <div class="col box p-4">
+                        <table class="table table-borderless text-center">
                             <tr>
-                                <td class="d-flex align-items-center p-2">
-                                    <img src="/<%=product.productId.imageUrl[0]%>" alt="Img" style="width: 50px;">
-                                    <%= product.productId.productName%>
-                                </td>
-                                <td>
-                                    <%= product.quantity %>
-                                </td>
-                                <td>
-                                    <%= product.productId.price %>
-                                </td>
-                                <td>
-                                    <%= product.total %>
-                                </td>
+                                <th>No.</th>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
                             </tr>
-                            <% }) %>
+                            <% order.products.forEach(function(product,index){ %>
                                 <tr>
-                                    <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
-                                    <td> <strong>₹ <%=order.total%></strong></td>
+                                    <td>
+                                        <%= index+1 %>
+                                    </td>
+                                    <td>
+                                        <%= product.productId.productName%>
+                                    </td>
+                                    <td>
+                                        <%= product.quantity %>
+                                    </td>
+                                    <td>
+                                        <%= product.productId.price %>
+                                    </td>
+                                    <td>
+                                        <%= product.total %>
+                                    </td>
                                 </tr>
-                    </table>
+                                <% }) %>
+                        </table>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-end mb-5">
+                <div class="col-2">
+                    <span> Sub Total </span><br>
+                    <span> Discount </span><br>
+                    <strong> Grand Total </strong>
+                </div>
+                <div class="col-2">
+                    <span>₹ <%=order.subTotal%></span><br>
+                    <span>₹ <%=order.discount%></span><br>
+                    <strong>₹ <%=order.grandTotal%></strong>
+                </div>
+            </div>
+
+            <div class="row my-3 box">
+                <div class="col-12 col-md-6 ">
+                    <h5 class="pt-3 ps-2">Shipping Address</h5>
+                    <div class="ps-2 pt-2">
+                        <p>Full name: <%= order.address.fullName %>
+                        </p>
+                        <p>Phone no : <%= order.address.phoneNumber %>
+                        </p>
+                        <p>Address : <%= order.address.address %>, <%= order.address.city %>, <%= order.address.state %>
+                                        -
+                                        <%= order.address.pincode %>
+                        </p>
+                        <p>Type : <%= order.address.type %>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 text-end ">
+                    <h5 class="p-2 ">Other Details</h5>
+                    <div class="pe-2">
+                        <p>Order Id : <%= order._id%>
+                        </p>
+                        <p>Order date : <%= moment(order.date).format("LL") %>
+                        </p>
+                        <p>Payment Method : <%= order.paymentMethod %>
+                        </p>
+                        <p>Payment Status : <%= order.paymentStatus %>
+                        </p>
+                    </div>
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="row my-3 box">
-            <div class="col-12 col-md-6 border">
-                <h5 class="text-center p-2">Shipping Address</h5>
-                <div class="ps-3 pt-3">
-                    <p>Full name: <%= order.address.fullName %>
-                    </p>
-                    <p>Phone no : <%= order.address.phoneNumber %>
-                    </p>
-                    <p>Address : <%= order.address.address %>, <%= order.address.city %>, <%= order.address.state %> -
-                                    <%= order.address.pincode %>
-                    </p>
-                    <p>Type : <%= order.address.type %>
-                    </p>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 text-center border">
-                <h5 class="p-2 text-center">Other Details</h5>
-                <div>
-                    <p>Order Id : <%= order._id%>
-                    </p>
-                    <p>Order date : <%= moment(order.date).format("LL") %>
-                    </p>
-                    <p>Payment Method : <%= order.paymentMethod %>
-                    </p>
-                    <p>Payment Status : <%= order.paymentStatus %>
-                    </p>
-                </div>
-                </p>
-            </div>
-        </div>
-        <div class="row box mt-5 d-flex align-items-center ">
-            <div class="text-center p-3" id="orderStatus">
+        <div class="row box mt-5 d-flex align-items-center justify-content-between ">
+            <div class="col-6 p-3" id="orderStatus">
                 <strong>Current order status :</strong> <span class="border">
                     <%= order.orderStatus %>
                 </span>
-                <% if(order.orderStatus != "Cancelled" && order.orderStatus != "Delivered" ){ %>
-                    <div class=" p-2 text-center">
+                <% if(order.orderStatus !="Cancelled" && order.orderStatus !="Delivered" ){ %>
+                    <div class="">
                         <button id="cancelBtn" class="btn btn-outline-danger m-2"
                             onclick="cancelOrder('<%= order._id %>')">Cancel
                             Order</button>
                     </div>
                     <% } %>
             </div>
+            <div class="col-6 p-2 text-end">
+                <button id="download-button" class="btn btn-outline-primary m-2">Download invoice</button>
+            </div>
         </div>
     </section>
 
     <script>
+
+        const button = document.getElementById('download-button');
+        function generatePDF() {
+            var opt = {
+                margin: 0,
+                filename: 'ride_invoice.pdf',
+                image: { type: 'jpg', quality: 0.98 },
+                html2canvas: { useCORS: true, scale: 3, y: 0, scrollY: 0 },
+                jsPDF: { format: 'A4' },
+            }
+            // Choose the element that your content will be rendered to.
+            const element = document.getElementById('invoice');
+            // Choose the element and save the PDF for your user.
+            html2pdf().from(element).save();
+        }
+        button.addEventListener('click', generatePDF);
+
         let status = document.getElementById("status").value
         function cancelOrder(orderId) {
             Swal.fire({
@@ -400,4 +256,6 @@
 
     </script>
 
-    <%- include('../userFooter.ejs') -%>
+</body>
+
+</html>

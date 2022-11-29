@@ -57,7 +57,7 @@
             <% }) %>
               <tr>
                 <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
-                <td> <strong>₹ <%=order.total%></strong></td>
+                <td> <strong>₹ <%= order.grandTotal %></strong></td>
               </tr>
         </table>
       </div>
@@ -93,7 +93,7 @@
       <div class="col-12 col-md-6 text-center border">
         <h5 class="p-2 text-center">Other Details</h5>
         <div>
-          <p>Order Id : <%= order._id%></p>
+          <p>Order Id : <%= order.grandTotal%></p>
           <p>Order date : <%= moment(order.date).format("LL") %> </p>
           <p>Payment Method : <%= order.paymentMethod %></p>
           <p>Payment Status : <%= order.paymentStatus %></p>

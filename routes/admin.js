@@ -6,7 +6,6 @@ const middleware = require('../middleware/auth-middlewares')
 // GET METHODS
 router.get('/', controller.login)
 router.get('/dashboard', controller.adminHome)
-// router.get('/changePassword',controller.changePassword)
 router.get('/allProducts', middleware.adminSession, controller.allProducts)
 router.get('/deletedProducts', middleware.adminSession, controller.deletedProducts)
 router.get('/addProduct', middleware.adminSession, controller.addProduct)
@@ -15,7 +14,6 @@ router.get('/allUsers', middleware.adminSession, controller.allUsers)
 router.get('/categories', middleware.adminSession, controller.categories)
 router.get('/orders', middleware.adminSession, controller.orders)
 router.get('/subcategories', middleware.adminSession, controller.subcategories)
-// router.get('/coupons',middleware.adminSession, controller.coupons)
 router.get('/order/:orderId',middleware.adminSession, controller.orderDetails)
 
 // POST METHODS
@@ -34,5 +32,16 @@ router.post('/restoreCategory/:id', controller.restoreCategory)
 router.post('/deleteSubcategory/:id', controller.deleteSubcategory)
 router.post('/restoreSubcategory/:id', controller.restoreSubcategory)
 router.post('/changeOrderStatus',controller.changeOrderStatus)
+
+// CAHIN ROUTE
+router
+    .route('/coupons')
+    .get(middleware.adminSession, controller.coupons)
+    .post(middleware.adminSession, controller.newCoupon)
+
+router
+    .route('/couponAction/:id')
+    .post(middleware.adminSession,controller.deleteCoupon)
+    .patch(middleware.adminSession,controller.restoreCoupon)
 
 module.exports = router;

@@ -48,11 +48,6 @@ exports.adminHome = (req, res) => {
   req.session.adminLogin ? res.render("adminViews/index") : res.redirect("/admin")
 };
 
-// CHANGE PASSWORD PAGE
-// exports.changePassword = (req,res) => {
-//   res.render("adminViews/change-password")
-// }
-
 // ALL USERS
 exports.allUsers = async (req, res) => {
   adminHelpers.getUsers().then((users) => {
@@ -200,9 +195,35 @@ exports.restoreSubcategory = (req,res) =>{
   })
 } 
 
-// COUPONS PAGE
+// COUPON'S PAGE
 exports.coupons = (req,res) =>{
-  res.render('adminViews/coupon')
+  adminHelpers.getCoupons().then(response =>{
+    let coupons = response != null ? response : [] 
+    res.render('adminViews/coupon',{coupons,moment})
+  })
+}
+
+// NEW COUPON
+exports.newCoupon = (req,res) =>{
+  adminHelpers.newCoupon(req.body).then(()=>{
+    res.json({status:true})
+  })
+}
+
+// DELETE COUPON
+exports.deleteCoupon = (req,res) =>{
+  console.log(req.params.id);
+  adminHelpers.deleteCoupon(req.params.id).then(()=>{
+    res.json({status:true})
+  })
+}
+
+// RESTORE COUPON
+exports.restoreCoupon = (req,res) =>{
+  adminHelpers.restoreCoupon(req.params.id).then(()=>{
+    console.log(req.params.id);
+    res.json({status:true})
+  })
 }
 
 // ORDERS

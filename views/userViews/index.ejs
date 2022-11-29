@@ -145,7 +145,7 @@
   </div>
 
   <!-- Product -->
-  <section class="bg0 p-t-23 p-b-50">
+  <section class="bg0 p-t-23 p-b-50" id="prdct">
     <div class="container">
       <div class="p-b-10">
         <h3 class="ltext-103 cl5">Bikes Overview</h3>
@@ -173,7 +173,7 @@
 
       </div> -->
       <div class="wrap-slick2">
-        <div class="slick2" id="prdct">
+        <div class="slick2">
           <% bikes.forEach(function(product){ %>
             <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 <%= product.category.category %>">
               <!-- Block2 -->
@@ -202,19 +202,21 @@
                         <img class="icon-heart1 dis-block " src="/public/users/images/icons/icon-heart-01.png"
                           alt="ICON" />
                       </button>
-                    <% } %>  
-                    <% if ( login ) { %> <% let inWishlist = wishlistItems.some(item => item._id.toString() === product._id.toString() ) %> 
-                    <% if(inWishlist) { %>
-                      <button onclick="removeFromWishlist('<%= product._id %>','<%= product.productName %>')">
-                        <img class="icon-heart2 dis-block " src="/public/users/images/icons/icon-heart-02.png"
-                          alt="ICON">
-                      </button>
-                    <%}else{%>
-                        <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
-                          <img class="icon-heart1 dis-block " src="/public/users/images/icons/icon-heart-01.png"
-                            alt="ICON" />
-                        </button>
-                    <%}}%>
+                      <% } %>
+                        <% if ( login ) { %>
+                          <% let inWishlist=wishlistItems.some(item=> item._id.toString() === product._id.toString() )
+                            %>
+                            <% if(inWishlist) { %>
+                              <button onclick="removeFromWishlist('<%= product._id %>','<%= product.productName %>')">
+                                <img class="icon-heart2 dis-block " src="/public/users/images/icons/icon-heart-02.png"
+                                  alt="ICON">
+                              </button>
+                              <%}else{%>
+                                <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
+                                  <img class="icon-heart1 dis-block " src="/public/users/images/icons/icon-heart-01.png"
+                                    alt="ICON" />
+                                </button>
+                                <%}}%>
                   </div>
                 </div>
               </div>
@@ -252,8 +254,8 @@
         </div>
 
       </div>
-      <div class="wrap-slick2" >
-        <div class="slick2" >
+      <div class="wrap-slick2">
+        <div class="slick2">
           <% accessoriesNgadgets.forEach(function(product){ %>
             <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 isotope-item <%= product.category.category %>">
               <!-- Block2 -->
@@ -300,22 +302,24 @@
   </section>
 
   <script>
+
+    function reload() {
+      location.reload()
+    }
+
     function addToWishlist(productId, productName) {
       $.ajax({
         url: '/addToWishlist/' + productId,
         method: 'post',
         success: (response) => {
           if (response.status) {
-            // $("#prdct").load(location.href + " #prdct>*", "");
-            // $("#prdct").load(" #prdct");
             Swal.fire({
               icon: 'success',
               title: productName,
               text: ' Added to wishlist!',
               showConfirmButton: false,
-              timer: 1500
             })
-            location.reload();
+            setTimeout(reload, 1000)
           } else {
             Swal.fire({
               icon: 'warning',
@@ -326,23 +330,20 @@
         }
       })
     }
-    
-    function removeFromWishlist(productId, productName){
+
+    function removeFromWishlist(productId, productName) {
       $.ajax({
-        url:'/removeWishlistItem/'+productId,
+        url: '/removeWishlistItem/' + productId,
         method: 'post',
-        success:(response)=>{
-          // $("#prdct").load(location.href + " #prdct>*", "");
-          // $("#prdct").load(" #prdct");
-          if(response.status){
+        success: (response) => {
+          if (response.status) {
             Swal.fire({
               icon: 'success',
               title: productName,
               text: 'Removed from wishlist.',
               showConfirmButton: false,
-              timer: 1500
             })
-            location.reload();
+            setTimeout(reload, 1000)
           }
         }
       })

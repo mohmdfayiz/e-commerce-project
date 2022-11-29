@@ -1,14 +1,8 @@
 const { response } = require("express");
 const addressModel = require('../../model/addressModel')
 const cartModel = require("../../model/cartModel")
-const orderModel = require("../../model/orderModel");
+const couponModel = require("../../model/couponModel")
 
-const Razorpay = require('razorpay');
-const { resolve } = require("path");
-var instance = new Razorpay({
-  key_id: 'rzp_test_nOABmeWu0jJGLN',
-  key_secret: 'as4aQXuHoMWnonAaD1p4pv1C',
-});
 
 module.exports = {
 
@@ -20,64 +14,33 @@ module.exports = {
         })
     },
 
-    placeOrder: (userId, adrsIndex, paymentMethod) => {
+    applyCoupon: (userId, couponCode) => {
         return new Promise(async (resolve, reject) => {
-            
-            let addresses = await addressModel.findOne({userId})
-            let address = addresses.address[adrsIndex]
+            await couponModel.findOne({ coupon_code: couponCode }).then(async (coupon) => {
+                if (coupon) {
+                    // await couponModel.findOne({users:})
+                    await cartModel.findOne({ userId }).then(async (cart) => {
+                        let discount = ((cart.cartTotal / 100)*coupon.discount).toFixed(2);
+                        let grandTotal = cart.cartTotal - discount 
+                        await cartModel.findOneAndUpdate({userId},{ $set: { discount, grandTotal } })
+                        await couponModel.findOneAndUpdate({coupon_code:couponCode},{$push:{users:userId}})
+                        resolve(true)
+                    })
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    },
 
+    placeOrder: (userId) => {
+        return new Promise(async (resolve, reject) => {
             let cart = await cartModel.findOne({ userId })
-            let total = cart.cartTotal
-            let products = cart.products
+            let total = cart.cartTotal - cart.discount
+            let cartId = cart._id
+            resolve({cartId, total})
 
-            const newOrder = new orderModel({
-                userId,
-                products,
-                total,
-                address,
-                paymentMethod,
-            })
-            newOrder.save().then(async() => {
-                // await cartModel.findByIdAndDelete({ _id: cart._id })
-                let orderId = newOrder._id, total = newOrder.total
-                resolve({orderId, total})
-            })
         })
     },
 
-    generateRazorpay: (orderId, total)=>{
-        return new Promise (async(resolve,reject)=>{
-            instance.orders.create({
-                amount: total * 100,
-                currency: "INR",
-                receipt: "" + orderId,
-                
-              },function (err,order) {
-                resolve(order)
-              })
-        })
-    },
-
-    verifyPayment:(details)=>{
-        return new Promise (async(resolve,reject)=>{
-            console.log(details);
-            const crypto = require('crypto')
-            let hmac = crypto.createHmac('sha256', 'as4aQXuHoMWnonAaD1p4pv1C')
-            hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
-            hmac = hmac.digest('hex')
-            if(hmac === details['payment[razorpay_signature]']){
-                resolve()
-            }else{
-                reject()
-            }
-        })
-    },
-
-    changePaymentStatus:(orderId)=>{
-        return new Promise (async(resolve,reject)=>{
-            console.log(orderId);
-            await orderModel.findOneAndUpdate({_id:orderId},{$set:{paymentStatus:"Completed"}})
-            resolve()
-        })
-    }
 }

@@ -52,8 +52,7 @@
                                     <div class="card card-body">
                                         <% address.forEach(function(adrs,index){ %>
                                             <div class="form-check card card-body">
-                                                <input class="form-check-input" type="radio" value="<%= index %>"
-                                                    name="index" id="exampleRadios1" value="option1">
+                                                <input class="form-check-input" type="radio" value="<%= index %>" name="index" id="exampleRadios1">
                                                 <label class="form-check-label" for="exampleRadios1">
                                                     <p><strong>Full Name :</strong>
                                                         <%= adrs.fullName %>
@@ -190,7 +189,8 @@
                     <h4 class="mtext-109 cl2 p-b-30">Your order</h4>
                     <% cartItems.forEach(function(product){ %>
                         <div class="flex-w flex-t bor12 p-b-13">
-                            <img src="/<%= product.productId.imageUrl[0] %>" alt="" style="width:60px">
+                            <img src="/<%= product.productId.imageUrl[0] %>" alt=""
+                                style="width:60px; height: 70px; object-fit: cover;">
                             <div class="m-l-30">
                                 <p><strong>
                                         <%= product.productId.productName %>
@@ -208,24 +208,47 @@
 
                                 <div class="size-209 p-t-1 p-b-5 d-flex justify-content-end">
                                     <span class="mtext-110 cl2">
-                                        <%= cartTotal %>
+                                        <%= cart.cartTotal %>
                                     </span>
                                 </div>
+
                                 <div class="size-208 p-b-5">
                                     <span class="mtext-101 cl2">Shpping: </span>
                                 </div>
 
                                 <div class="size-209 p-t-1 p-b-5 d-flex justify-content-end">
-                                    <span class="mtext-110 cl2 ">Free</span>
+                                    <span class="mtext-110 cl2 text-success">Free</span>
                                 </div>
+                                <% if(cart.discount> 0){ %>
+                                    <div class="size-208 p-b-5">
+                                        <span class="mtext-101 cl2">Discount</span>
+                                    </div>
 
-                                <div class="size-208 p-b-5 ">
-                                    <span class="mtext-101 cl2">Total: </span>
-                                </div>
+                                    <div class="size-209 p-t-1 p-b-5 d-flex justify-content-end">
+                                        <span class="mtext-110 cl2">
+                                            <%= cart.discount %>
+                                        </span>
+                                    </div>
+                                    <% } %>
 
-                                <div class="size-209 p-t-1 p-b-5 d-flex justify-content-end">
-                                    <span class="mtext-110 cl2">₹ <%= cartTotal %></span>
-                                </div>
+                                        <div class="size-208 p-b-10 m-t-10 bor12">
+                                            <input class="p-1 rounded" type="text" name="coupon" id="coupon"
+                                                placeholder="Redeem coupon."
+                                                style="border: 1px solid; border-color: rgb(159, 159, 159);">
+                                        </div>
+
+                                        <div class="size-209 bor12 p-b-10 m-t-10 d-flex justify-content-end">
+                                            <button onclick="applyCoupon()" class="p-1 rounded"
+                                                style="border: 1px solid; border-color: rgb(159, 159, 159); width: 60px;">Apply</button>
+                                        </div>
+
+                                        <div class="size-208 mt-2 p-b-5 ">
+                                            <span class="mtext-101 cl2">Total: </span>
+                                        </div>
+
+                                        <div class="size-209 mt-2 p-t-1 p-b-5 d-flex justify-content-end">
+                                            <span class="mtext-110 cl2">₹ <%= cart.grandTotal %></span>
+                                        </div>
                             </div>
 
                             <div class="form-check">
@@ -250,18 +273,40 @@
             </div>
         </div>
     </div>
+
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
 
+        function applyCoupon() {
+            let coupon_code = document.getElementById("coupon").value
+            if (coupon_code != "") {
+                $.ajax({
+                    url: '/applyCoupon/' + coupon_code,
+                    method: 'POST',
+                    success: (response) => {
+                        if (response) {
+                            location.reload()
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: ' Wrong coupon code! ',
+                            })
+                        }
+                    }
+                })
+            }
+        }
+
         function placeOrder(index) {
-            let num = parseInt(index)
+            let adrsIndex = parseInt(index)
             let paymentMethod = document.getElementById("cod").checked ? "COD" : "Razorpay"
 
             $.ajax({
                 url: '/placeOrder',
                 data: {
-                    index: num,
-                    paymentMethod: paymentMethod
+                    paymentMethod: paymentMethod,
+                    index: adrsIndex
                 },
                 method: 'post',
                 success: (response) => {
@@ -300,13 +345,15 @@
                     }
                 };
                 function verifyPayment(payment, order) {
+
                     $.ajax({
                         url: '/verifyPayment',
+                        method: 'post',
                         data: {
                             payment,
-                            order
+                            order,
+                            adrsIndex
                         },
-                        method: 'post',
                         success: (response) => {
                             if (response.status) {
                                 location.href = "/orderSuccess"

@@ -23,7 +23,6 @@ router.get('/orders', middlewares.userAuth, controller.orders)
 router.get('/orderDetails/:orderId', middlewares.userAuth, controller.orderDetails)
 
 // CHAIN ROUTE
-
 router
     .route("/signin")
     .get(authenticationController.signin)
@@ -39,7 +38,6 @@ router
     .get(authenticationController.emailVarification)
     .post(authenticationController.varify)
     
-
 router
     .route('/changePassword')
     .get(authenticationController.changePassword)
@@ -55,6 +53,10 @@ router
     .get( middlewares.userAuth,controller.accountSettings)
     .post(middlewares.userAuth,controller.editProfile)
     .patch(authenticationController.updatePassword)
+
+router
+    .route('/applyCoupon/:coupon')
+    .post(middlewares.userAuth, controller.applyCoupon) 
 
 // POST METHODS
 router.post("/signup", authenticationController.doSignup)

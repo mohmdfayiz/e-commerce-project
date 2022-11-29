@@ -7,8 +7,7 @@ const orderHelpers = require('../helpers/user/orderHelpers')
 const { response, json } = require("express");
 const { trusted } = require('mongoose')
 const moment = require("moment")
-const addressModel = require("../model/addressModel")
-const userModel = require("../model/userModel")
+const Razorpay = require('razorpay');
 
 // USER HOME PAGE
 exports.home = (req, res) => {
@@ -69,7 +68,7 @@ exports.accountSettings = (req, res) => {
 exports.editProfile = (req, res) => {
   let userId = req.session.user._id
   profileHelpers.editProfile(userId, req.body).then(() => {
-    res.json({status:true})
+    res.json({ status: true })
   })
 }
 
@@ -162,8 +161,7 @@ exports.cart = async (req, res) => {
   cartHelpers.cart_items(userId).then((cart) => {
     if (cart) {
       let products = cart.products
-      let cartTotal = cart.cartTotal
-      res.render('userViews/shoping-cart', { login: true, products, cartTotal })
+      res.render('userViews/shoping-cart', { login: true, products, cart })
     } else {
       res.render('userViews/shoping-cart', { login: true, products: [] })
     }
@@ -228,15 +226,23 @@ exports.checkout = (req, res) => {
   checkoutHelpers.checkout(userId).then((result) => {
     let { cart, address } = result;
     if (cart != null && cart.products.length > 0) {
-      let cartTotal = cart.cartTotal
       let cartItems = cart.products
       address = address ? address.address : 0
       let length = address ? address.length : 0
       req.body.index ? index = req.body.index : index = length - 1
-      res.render('userViews/checkout', { login: true, cartTotal, cartItems, address, index });
+      res.render('userViews/checkout', { login: true, cart, cartItems, address, index });
     } else {
       res.redirect('/cart')
     }
+  })
+}
+
+// APPLY COUPON
+exports.applyCoupon = (req,res)=>{
+  let userId = req.session.user._id
+  let couponCode = req.params.coupon
+  checkoutHelpers.applyCoupon(userId, couponCode).then((response)=>{
+    res.json(response)
   })
 }
 
@@ -244,15 +250,29 @@ exports.checkout = (req, res) => {
 exports.placeOrder = (req, res) => {
 
   let userId = req.session.user._id
-  let adrsIndex = req.body['index']
+  let index = req.body['index']
   let paymentMethod = req.body['paymentMethod']
-  checkoutHelpers.placeOrder(userId, adrsIndex, paymentMethod).then((response) => {
-    let { orderId, total } = response
+   
+  checkoutHelpers.placeOrder(userId).then((response) => {
+    let { cartId, total } = response
     if (paymentMethod == 'COD') {
-      res.json({ codSuccess: true })
+      orderHelpers.createOrder(userId, index, paymentMethod).then(() => {
+        res.json({ codSuccess: true })
+      })
     } else {
-      checkoutHelpers.generateRazorpay(orderId, total).then((response) => {
-        res.json(response)
+
+      var instance = new Razorpay({
+        key_id: 'rzp_test_nOABmeWu0jJGLN',
+        key_secret: 'as4aQXuHoMWnonAaD1p4pv1C',
+      });
+
+      instance.orders.create({
+        amount: total * 100,
+        currency: "INR",
+        receipt: "" + cartId,
+
+      }, function (err, order) {
+        res.json(order)
       })
     }
   })
@@ -260,22 +280,28 @@ exports.placeOrder = (req, res) => {
 
 // VERIFY PAYMENT
 exports.verifyPayment = (req, res) => {
-  checkoutHelpers.verifyPayment(req.body).then(() => {
-    checkoutHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
+
+  let userId = req.session.user._id
+  let details = req.body
+  let index = details.adrsIndex
+
+  const crypto = require('crypto')
+  let hmac = crypto.createHmac('sha256', 'as4aQXuHoMWnonAaD1p4pv1C')
+  hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
+  hmac = hmac.digest('hex')
+
+  if (hmac === details['payment[razorpay_signature]']) {
+    orderHelpers.createOrder(userId, index, "Razorpay").then(() => {
       res.json({ status: true })
     })
-  }).catch((err) => {
+  } else {
     res.json({ status: false })
-  })
+  }
 }
 
 //  ORDER SUCCESS PAGE
 exports.orderSuccess = (req, res) => {
   res.render('userViews/order-success', { login: true })
-
-  // delete cart 
-  let userId = req.session.user._id
-  cartHelpers.deleteCart(userId)
 }
 
 // TRACK ORDERS PAGE

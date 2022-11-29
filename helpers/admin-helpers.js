@@ -6,6 +6,7 @@ const orderModel = require('../model/orderModel');
 const bcrypt = require('bcrypt');
 const { login } = require('../controller/adminController');
 const addressModel = require('../model/addressModel');
+const couponModel = require('../model/couponModel');
 
 module.exports = {
 
@@ -161,7 +162,7 @@ module.exports = {
 
     editProductDetails: (id, data, images) => {
         return new Promise(async (resolve, reject) => {
-            const { category, productName,shortDescription, description, price, quantity } = data
+            const { category, productName, shortDescription, description, price, quantity } = data
 
             if (images != null) {
                 await productModel.findByIdAndUpdate({ _id: id }, { $set: { imageUrl: images } })
@@ -209,25 +210,61 @@ module.exports = {
 
     orders: () => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.find().sort({date:-1}).populate('products.productId').then(async (orders) => {
+            await orderModel.find().sort({ date: -1 }).populate('products.productId').then(async (orders) => {
                 resolve(orders)
             })
         })
     },
 
-    orderDetails: (orderId)=>{
-        return new Promise (async(resolve,reject)=>{
-            await orderModel.findById(orderId).populate('products.productId').then((order)=>{
+    orderDetails: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            await orderModel.findById(orderId).populate('products.productId').then((order) => {
                 resolve(order)
             })
         })
     },
 
-    changeOrderStatus: (orderId, status)=>{
-        return new Promise (async(resolve,reject)=>{
-            await orderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:status}}).then((response)=>{
+    changeOrderStatus: (orderId, status) => {
+        return new Promise(async (resolve, reject) => {
+            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status } }).then(() => {
                 resolve()
             })
         })
     },
+
+    getCoupons: () => {
+        return new Promise(async (resolve, reject) => {
+            await couponModel.find().then(coupon => resolve(coupon))
+        })
+    },
+
+    newCoupon: (data) => {
+        return new Promise(async (resolve, reject) => {
+            let { coupon_code, discount, expiry_date } = data;
+            discount = parseInt(discount)
+            console.log(discount);
+            const newCoupon = new couponModel({
+                coupon_code,
+                discount,
+                expiry_date
+            })
+            newCoupon.save().then(() => {
+                resolve()
+            })
+        })
+    },
+
+    deleteCoupon: (id) =>{
+        return new Promise (async(resolve,reject)=>{
+            await couponModel.updateOne({_id:id},{$set:{is_deleted:true}})
+            resolve()
+        })
+    },
+
+    restoreCoupon: (id)=>{
+        return new Promise (async(resolve,reject)=>{
+            await couponModel.updateOne({_id:id},{$set:{is_deleted:false}})
+            resolve()
+        })
+    }
 }

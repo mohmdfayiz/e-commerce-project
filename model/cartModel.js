@@ -13,9 +13,10 @@ const cartSchema = new mongoose.Schema({
             total : {type:Number,required:true},
             date: { type: Date, default: Date.now }
         }],
-    cartTotal:{
-        type:Number
-    }    
+    
+    cartTotal:Number,
+    discount:{type:Number,default:0},
+    grandTotal:Number
 })
 
 module.exports = cart = mongoose.model('Cart', cartSchema)
