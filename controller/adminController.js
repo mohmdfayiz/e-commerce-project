@@ -71,8 +71,11 @@ exports.unblockUser = async (req, res) => {
 
 // VIEW ALL PRODUCTS
 exports.allProducts = async (req, res) => {
-  adminHelpers.getProducts().then((products) => {
-    res.render("adminViews/products", { products });
+
+  const page = parseInt(req.query.page) || 1;
+  adminHelpers.getProducts(page).then((response) => {
+    let {products,totalPages} = response
+    res.render("adminViews/products", { products, page, totalPages}); 
   })
 };
 
@@ -241,11 +244,19 @@ exports.orderDetails = (req,res) =>{
   })
 }
 
-// CHANGE ORDER DETAILS
+// CHANGE ORDER STATUS
 exports.changeOrderStatus = (req,res) =>{
   let orderId = req.body.orderId
   let status = req.body.status
   adminHelpers.changeOrderStatus(orderId,status).then(()=>{
+    res.json({response:true})
+  })
+}
+
+// CHANGE PAIMENT STATUS
+exports.changePaymentStatus = (req,res) =>{
+  let orderId = req.body.id
+  adminHelpers.changePaymentStatus(orderId).then(()=>{
     res.json({response:true})
   })
 }

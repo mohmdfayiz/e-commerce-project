@@ -15,7 +15,10 @@ const orderSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    discount:{type:Number},
+    discount:{
+        couponId:ObjectId,
+        amount: Number
+    },
     grandTotal:{
         type:Number,
         required:true
@@ -35,10 +38,11 @@ const orderSchema = new mongoose.Schema({
         type:String,
         default:'Order Placed'
     },
-    date:{
+    orderDate:{
         type:Date,
         default:Date.now()
-    }
+    },
+    deliveryDate:{type:Date}
 })
 
 module.exports = Order = mongoose.model('Order',orderSchema);

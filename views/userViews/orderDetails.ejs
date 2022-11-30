@@ -150,7 +150,7 @@
                 </div>
                 <div class="col-2">
                     <span>₹ <%=order.subTotal%></span><br>
-                    <span>₹ <%=order.discount%></span><br>
+                    <span>₹ <%=order.discount.amount%></span><br>
                     <strong>₹ <%=order.grandTotal%></strong>
                 </div>
             </div>
@@ -176,8 +176,8 @@
                     <div class="pe-2">
                         <p>Order Id : <%= order._id%>
                         </p>
-                        <p>Order date : <%= moment(order.date).format("LL") %>
-                        </p>
+                        <p>Order date : <%= moment(order.date).format("LL") %></p>
+                        <p>Delivery date: <%= moment(order.deliveryDate).format("LL") %></p>
                         <p>Payment Method : <%= order.paymentMethod %>
                         </p>
                         <p>Payment Status : <%= order.paymentStatus %>

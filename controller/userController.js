@@ -12,7 +12,15 @@ const Razorpay = require('razorpay');
 // USER HOME PAGE
 exports.home = (req, res) => {
   productHelpers.getProducts().then((products) => {
-    const { bikes, accessoriesNgadgets } = products
+    let bikes = []
+    let accessoriesNgadgets = []
+    products.forEach(product => {
+      if (product.category.parentCategory === 'Bike') {
+        bikes.push(product)
+      } else {
+        accessoriesNgadgets.push(product)
+      }
+    });
     req.session.userLogin ?
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
         res.render("userViews/index", { bikes, accessoriesNgadgets, wishlistItems, login: true })
@@ -21,10 +29,17 @@ exports.home = (req, res) => {
   })
 };
 
+// SHOP PAGE
+exports.allProducts = (req, res) => {
+  productHelpers.getProducts().then((products) => {
+    let login = req.session.userLogin ? true : false
+    res.render('userViews/shop', { products, login })
+  })
+}
+
 // BIKES PAGE
 exports.bikes = (req, res) => {
-  productHelpers.getProducts().then((products) => {
-    const { bikes, accessoriesNgadgets } = products
+  productHelpers.getBikes().then((bikes) => {
     let login = req.session.userLogin ? true : false
     res.render('userViews/bikes', { login, bikes })
   })
@@ -126,8 +141,12 @@ exports.product_details = async (req, res) => {
 
   productHelpers.product_details(id, userId).then((details) => {
     const { product, related_products, exist } = details
-    let login = req.session.user ? true : false
-    res.render('userViews/product-detail', { product, related_products, login, exist })
+    req.session.userLogin ?
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+        res.render('userViews/product-detail', { product, related_products, wishlistItems, login: true, exist })
+      })
+      : res.render('userViews/product-detail', { product, related_products, login: false, exist })
+
   })
 }
 
@@ -142,7 +161,7 @@ exports.wishlist = (req, res) => {
 // ADD TO WISHLIST
 exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
-  let userId = req.session.user._id    //user id
+  let userId = req.session.user._id 
   await wishlistHelpers.addto_wishlist(userId, productId)
   res.json({ status: true })
 }
@@ -238,11 +257,11 @@ exports.checkout = (req, res) => {
 }
 
 // APPLY COUPON
-exports.applyCoupon = (req,res)=>{
+exports.applyCoupon = (req, res) => {
   let userId = req.session.user._id
   let couponCode = req.params.coupon
-  checkoutHelpers.applyCoupon(userId, couponCode).then((response)=>{
-    res.json(response)
+  checkoutHelpers.applyCoupon(userId, couponCode).then((response) => {
+    response.exist ? res.json({ exist: true }) : res.json(response)
   })
 }
 
@@ -252,9 +271,10 @@ exports.placeOrder = (req, res) => {
   let userId = req.session.user._id
   let index = req.body['index']
   let paymentMethod = req.body['paymentMethod']
-   
+
   checkoutHelpers.placeOrder(userId).then((response) => {
     let { cartId, total } = response
+    console.log(response);
     if (paymentMethod == 'COD') {
       orderHelpers.createOrder(userId, index, paymentMethod).then(() => {
         res.json({ codSuccess: true })
@@ -272,6 +292,7 @@ exports.placeOrder = (req, res) => {
         receipt: "" + cartId,
 
       }, function (err, order) {
+        console.log(err);
         res.json(order)
       })
     }

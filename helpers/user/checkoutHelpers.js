@@ -18,14 +18,17 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             await couponModel.findOne({ coupon_code: couponCode }).then(async (coupon) => {
                 if (coupon) {
-                    // await couponModel.findOne({users:})
-                    await cartModel.findOne({ userId }).then(async (cart) => {
-                        let discount = ((cart.cartTotal / 100)*coupon.discount).toFixed(2);
-                        let grandTotal = cart.cartTotal - discount 
-                        await cartModel.findOneAndUpdate({userId},{ $set: { discount, grandTotal } })
-                        await couponModel.findOneAndUpdate({coupon_code:couponCode},{$push:{users:userId}})
-                        resolve(true)
-                    })
+                    let exist = await couponModel.findOne({coupon_code:couponCode, users: { $in: userId } })
+                    if(exist){
+                        resolve({exist:true})
+                    }else{
+                        await cartModel.findOne({ userId }).then(async (cart) => {
+                            let amount = ((cart.cartTotal / 100) * coupon.discount).toFixed(0)
+                            let grandTotal = cart.cartTotal - amount
+                            await cartModel.findOneAndUpdate({ userId }, { $set: { discount: { couponId: coupon._id, amount }, grandTotal } })
+                            resolve(true)
+                        })
+                    }
                 } else {
                     resolve(false)
                 }
@@ -36,9 +39,9 @@ module.exports = {
     placeOrder: (userId) => {
         return new Promise(async (resolve, reject) => {
             let cart = await cartModel.findOne({ userId })
-            let total = cart.cartTotal - cart.discount
+            let total = cart.cartTotal - cart.discount.amount
             let cartId = cart._id
-            resolve({cartId, total})
+            resolve({ cartId, total })
 
         })
     },

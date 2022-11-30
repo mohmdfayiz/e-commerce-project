@@ -9,6 +9,7 @@ const middlewares = require("../middleware/auth-middlewares");
 router.get("/signup", authenticationController.signup)
 router.get('/email_varification', authenticationController.email_vairification)
 router.get("/", controller.home)
+router.get('/shop',controller.allProducts)
 router.get('/bikes', controller.bikes)
 router.get('/accessories', controller.accessories)
 router.get('/gadgets', controller.gadgets)

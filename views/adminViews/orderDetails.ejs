@@ -31,17 +31,16 @@
   <div class="container mt-5">
     <div class="row">
       <div class="col box p-4">
-        <table class="table">
+        <table class="table text-center">
           <tr>
-            <th>Product</th>
+            <th>Product Name</th>
             <th>Quantity</th>
             <th>Price</th>
             <th>Total</th>
           </tr>
           <% order.products.forEach(function(product){ %>
             <tr>
-              <td class="d-flex align-items-center p-2">
-                <img src="/<%=product.productId.imageUrl[0]%>" alt="Img" style="width: 50px;">
+              <td>
                 <%= product.productId.productName%>
               </td>
               <td>
@@ -56,28 +55,24 @@
             </tr>
             <% }) %>
               <tr>
-                <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
-                <td> <strong>₹ <%= order.grandTotal %></strong></td>
+                <td colspan="3" class="text-end">
+                  <span>Sub Total</span><br>
+                  <span>Discount</span><br>
+                  <strong>Grand Total</strong>
+                </td>
+                <td> 
+                  <span>₹ <%= order.subTotal %></span><br>
+                  <span>₹ <%= order.discount.amount %></span><br>
+                  <strong>₹ <%= order.grandTotal %></strong>
+                </td>
               </tr>
         </table>
       </div>
     </div>
-    <div class="row box mt-3 d-flex align-items-center ">
-      <div class="col-md-4 text-center p-2" id="orderStatus">
-        <strong>Current order status :</strong> <span class="border">
-           <%= order.orderStatus %>
-        </span>
-      </div>
-      <div class="col-md-8  p-2 text-center">
-        <button class="btn btn-outline-info m-2" onclick="changeStatus('<%= order._id %>', 'Packed')">Packed</button>
-        <button class="btn btn-outline-primary m-2"onclick="changeStatus('<%= order._id %>', 'Shipped')">Shipped</button>
-        <button class="btn btn-outline-success m-2"onclick="changeStatus ('<%= order._id %>', 'Delivered')">Delivered</button>
-        <button class="btn btn-outline-danger m-2" onclick="changeStatus('<%= order._id %>','Cancelled')">Cancel</button>
-      </div>
-    </div>
+    
     <div class="row my-3 box">
       <div class="col-12 col-md-6 border">
-        <h5 class="text-center p-2">Shipping Address</h5>
+        <h5 class="p-2">Shipping Address</h5>
         <div class="ps-3 pt-3">
           <p>Full name: <%= order.address.fullName %>
           </p>
@@ -90,22 +85,59 @@
           </p>
         </div>
       </div>
-      <div class="col-12 col-md-6 text-center border">
-        <h5 class="p-2 text-center">Other Details</h5>
-        <div>
-          <p>Order Id : <%= order.grandTotal%></p>
-          <p>Order date : <%= moment(order.date).format("LL") %> </p>
-          <p>Payment Method : <%= order.paymentMethod %></p>
-          <p>Payment Status : <%= order.paymentStatus %></p>
+      <div class="col-12 col-md-6 text-end border" id="details">
+        <h5 class="p-2">Other Details</h5>
+        <div class="p-2">
+          <span>Order Id : <%= order._id%></span><br>
+          <span>Order date : <%= moment(order.date).format("LL") %> </span><br>
+          <span>Delivery date : <%= moment(order.deliveryDate).format("LL") %> </span><br>
+          <span>Payment Method : <%= order.paymentMethod %></span><br>
+          <span>Payment Status : <%= order.paymentStatus %></span><br>
         </div>
         </p>
+      </div>
+    </div>
+
+    <div class="row box my-3 d-flex align-items-center ">
+      <div class="col-md-4 text-center p-2" id="orderStatus">
+        <strong>Current order status :</strong> <span class="border">
+           <%= order.orderStatus %>
+        </span>
+      </div>
+      <div class="col-md-8  p-2 text-center" id="statusBtns">
+        <button class="btn btn-outline-info m-2" onclick="changeStatus('<%= order._id %>', 'Packed')">Packed</button>
+        <button class="btn btn-outline-primary m-2"onclick="changeStatus('<%= order._id %>', 'Shipped')">Shipped</button>
+        <button class="btn btn-outline-success m-2"onclick="changeStatus ('<%= order._id %>', 'Delivered')">Delivered</button>
+        <% if(order.paymentStatus == "Pending"){ %> 
+        <button class="btn btn-outline-success m-2"onclick="paid('<%= order._id %>')">Paid</button>
+        <% } %> 
+        <button class="btn btn-outline-danger m-2" onclick="changeStatus('<%= order._id %>','Cancelled')">Cancel</button>
       </div>
     </div>
   </div>
 
   <script>
+    function paid(orderId){
+      $.ajax({
+        url:'/admin/changePaymentStatus',
+        method:'POST',
+        data:{
+          id:orderId
+        },
+        success:(response)=>{
+          $("#details").load(" #details > *");
+          $("#statusBtns").load(" #statusBtns > *");
+            Swal.fire({
+              icon: 'success',
+              title: "Paid",
+              text: 'Payment status updated successfully.',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        }
+      })
+    }
     function changeStatus(OrderId, Status) {
-      console.log(OrderId, Status)
       $.ajax({
         url: '/admin/changeOrderStatus',
         data: {

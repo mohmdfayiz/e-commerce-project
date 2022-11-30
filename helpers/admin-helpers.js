@@ -124,11 +124,17 @@ module.exports = {
         })
     },
 
-    getProducts: () => {
+    getProducts:(page) => {
         return new Promise(async (resolve, reject) => {
-            let product = await productModel.find({ isDeleted: false }).populate('category').sort({ createdAt: -1 })
-            resolve(product)
-        })
+
+            let productsPerPage = 5;
+            let totalProducts = await productModel.find().countDocuments()
+            let totalPages = Math.ceil(totalProducts / productsPerPage)
+            let skip = (page - 1) * productsPerPage
+
+            let products = await productModel.find({ isDeleted: false }).populate('category').sort({ createdAt: -1 }).skip(skip).limit(productsPerPage)
+            resolve({products,totalPages})
+        }).catch( err => console.log(err) )
     },
 
     newProduct: (data, images) => {
@@ -210,7 +216,7 @@ module.exports = {
 
     orders: () => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.find().sort({ date: -1 }).populate('products.productId').then(async (orders) => {
+            await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').then(async (orders) => {
                 resolve(orders)
             })
         })
@@ -227,6 +233,14 @@ module.exports = {
     changeOrderStatus: (orderId, status) => {
         return new Promise(async (resolve, reject) => {
             await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status } }).then(() => {
+                resolve()
+            })
+        })
+    },
+
+    changePaymentStatus:(orderId)=>{
+        return new Promise(async(resolve,reject)=>{
+            await orderModel.findOneAndUpdate({_id:orderId},{$set:{paymentStatus:"Paid"}}).then(()=>{
                 resolve()
             })
         })

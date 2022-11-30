@@ -6,9 +6,7 @@ const middleware = require('../middleware/auth-middlewares')
 // GET METHODS
 router.get('/', controller.login)
 router.get('/dashboard', controller.adminHome)
-router.get('/allProducts', middleware.adminSession, controller.allProducts)
 router.get('/deletedProducts', middleware.adminSession, controller.deletedProducts)
-router.get('/addProduct', middleware.adminSession, controller.addProduct)
 router.get('/editProduct/:id', middleware.adminSession, controller.editProduct)
 router.get('/allUsers', middleware.adminSession, controller.allUsers)
 router.get('/categories', middleware.adminSession, controller.categories)
@@ -32,8 +30,17 @@ router.post('/restoreCategory/:id', controller.restoreCategory)
 router.post('/deleteSubcategory/:id', controller.deleteSubcategory)
 router.post('/restoreSubcategory/:id', controller.restoreSubcategory)
 router.post('/changeOrderStatus',controller.changeOrderStatus)
+router.post('/changePaymentStatus',controller.changePaymentStatus)
 
 // CAHIN ROUTE
+router
+    .route('/allProducts')
+    .get(middleware.adminSession, controller.allProducts)
+    
+router
+    .route('/addProduct') 
+    .get(middleware.adminSession, controller.addProduct)
+
 router
     .route('/coupons')
     .get(middleware.adminSession, controller.coupons)

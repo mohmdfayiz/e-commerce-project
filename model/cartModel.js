@@ -15,8 +15,14 @@ const cartSchema = new mongoose.Schema({
         }],
     
     cartTotal:Number,
-    discount:{type:Number,default:0},
-    grandTotal:Number
+    discount:{
+        couponId:ObjectId,
+        amount: {type:Number,default:0}
+    },
+    grandTotal:{
+        type:Number,
+        required:true
+    }
 })
 
 module.exports = cart = mongoose.model('Cart', cartSchema)

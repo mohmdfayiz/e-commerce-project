@@ -4,18 +4,24 @@ const cartModel = require("../../model/cartModel")
 exports.getProducts = () => {
     return new Promise(async (resolve, reject) => {
         let products = await productModel.find({ isDeleted: false }).populate('category')
-        let bikes = []
-        let accessoriesNgadgets = []
-        products.forEach(product => {
-            if (product.category.parentCategory === 'Bike') {
-                bikes.push(product)
-            } else {
-                accessoriesNgadgets.push(product)
-            }
-        });
-        resolve({ bikes, accessoriesNgadgets })
+        resolve(products)
+
     })
 }
+
+exports.getBikes = () => {
+    return new Promise(async (resolve, reject) => {
+        let products = await productModel.find({ isDeleted: false }).populate('category')
+        let bikes = []
+        products.forEach((prodcut) => {
+            if (prodcut.category.parentCategory === 'Bike') {
+                bikes.push(prodcut)
+            }
+        })
+        resolve(bikes)
+    })
+}
+
 exports.getAccessories = () => {
     return new Promise(async (resolve, reject) => {
         let products = await productModel.find({ isDeleted: false }).populate('category')
@@ -28,16 +34,18 @@ exports.getAccessories = () => {
         resolve(accessories)
     })
 }
-exports.getGadgets = ()=>{
-    return new Promise(async(resolve,reject)=>{
+
+exports.getGadgets = () => {
+    return new Promise(async (resolve, reject) => {
         let products = await productModel.find({ isDeleted: false }).populate('category')
         let gadgets = []
-        products.forEach((product)=>{
+        products.forEach((product) => {
             product.category.parentCategory === "Gadgets" ? gadgets.push(product) : null
         })
         resolve(gadgets)
     })
 }
+
 exports.product_details = (id, userId) => {
     return new Promise(async (resolve, reject) => {
 

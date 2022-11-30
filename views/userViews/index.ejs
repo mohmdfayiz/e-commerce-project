@@ -145,41 +145,20 @@
   </div>
 
   <!-- Product -->
-  <section class="bg0 p-t-23 p-b-50" id="prdct">
+  <section class="bg0 p-t-23 p-b-50">
     <div class="container">
       <div class="p-b-10">
         <h3 class="ltext-103 cl5">Bikes Overview</h3>
       </div>
 
-      <!-- <div class="flex-w flex-sb-m p-b-20">
-        <div class="flex-w flex-l-m filter-tope-group m-tb-10">
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-            All Bicycles
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road">
-            Road Bike
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain">
-            Mountain Bike
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Hybrid">
-            Hybrid
-          </button>
-
-        </div>
-
-      </div> -->
-      <div class="wrap-slick2">
+      <div class="wrap-slick2" id="prdctCard">
         <div class="slick2">
           <% bikes.forEach(function(product){ %>
             <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15 <%= product.category.category %>">
               <!-- Block2 -->
               <div class="block2">
                 <div class="block2-pic hov-img0 ">
-                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="rounded img-frame">
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="rounded prd_card">
                   <a href="/product_details/<%= product._id%>"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                     Quick View
@@ -261,7 +240,7 @@
               <!-- Block2 -->
               <div class="block2">
                 <div class="block2-pic hov-img0">
-                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" />
+                  <img src="<%= product.imageUrl[0]%>" alt="IMG-PRODUCT" class="prd_card_small"/>
 
                   <a href="/product_details/<%= product._id%>"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
