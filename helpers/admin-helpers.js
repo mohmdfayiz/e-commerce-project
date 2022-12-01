@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const { login } = require('../controller/adminController');
 const addressModel = require('../model/addressModel');
 const couponModel = require('../model/couponModel');
+const bannerModel = require('../model/bannerModel')
 
 module.exports = {
 
@@ -32,6 +33,44 @@ module.exports = {
                 response.status = false;
                 resolve(response)
             }
+        })
+    },
+
+    dashboardDetails: () => {
+        return new Promise(async (resolve, reject) => {
+
+            let Delivered = await orderModel.find({ orderStatus: "Delivered" }).countDocuments()
+            let allProducts = await productModel.find({ isDeleted: false }).countDocuments()
+            let activeUsers = await userModel.find({ type: "Active" }).countDocuments()
+            let liveOrders = await orderModel.find({ orderStatus: { $nin: ["Delivered", "Cancelled"] } }).countDocuments()
+            let newOrders = await orderModel.find().sort({ orderDate: -1 }).limit(8)
+            let newUsers = await userModel.find({ type: "Active" }).sort({ join: -1 }).limit(5)
+
+            let start = new Date();
+            start.setHours(0, 0, 0, 0);
+            let end = new Date();
+            end.setHours(23, 59, 59, 999);
+            let ordersToday = await orderModel.find({orderDate: {$gte: start, $lt: end}}).countDocuments()
+
+            let online = await orderModel.aggregate([
+                { '$match': { 'paymentMethod': 'Razorpay' } },
+                { '$group': { '_id': null, 'total': { '$sum': "$grandTotal" } } }
+            ])
+
+            let sales = await orderModel.aggregate([
+                {
+                    '$group': {
+                        '_id': null,
+                        'totalCount': {
+                            '$sum': '$grandTotal'
+                        }
+                    }
+                }
+            ])
+
+            const onlinePayments = online.map(a => a.total)
+            const totalSales = sales.map(a => a.totalCount)
+            resolve({ allProducts, activeUsers, liveOrders, totalSales, onlinePayments, newOrders, newUsers,ordersToday })
         })
     },
 
@@ -124,7 +163,7 @@ module.exports = {
         })
     },
 
-    getProducts:(page) => {
+    getProducts: (page) => {
         return new Promise(async (resolve, reject) => {
 
             let productsPerPage = 5;
@@ -133,8 +172,8 @@ module.exports = {
             let skip = (page - 1) * productsPerPage
 
             let products = await productModel.find({ isDeleted: false }).populate('category').sort({ createdAt: -1 }).skip(skip).limit(productsPerPage)
-            resolve({products,totalPages})
-        }).catch( err => console.log(err) )
+            resolve({ products, totalPages })
+        }).catch(err => console.log(err))
     },
 
     newProduct: (data, images) => {
@@ -214,10 +253,16 @@ module.exports = {
         })
     },
 
-    orders: () => {
+    orders: (page) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').then(async (orders) => {
-                resolve(orders)
+
+            let productsPerPage = 10;
+            let totalProducts = await productModel.find().countDocuments()
+            let totalPages = Math.ceil(totalProducts / productsPerPage)
+            let skip = (page - 1) * productsPerPage
+
+            await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').skip(skip).limit(productsPerPage).then(async (orders) => {
+                resolve({orders,totalPages})
             })
         })
     },
@@ -238,9 +283,9 @@ module.exports = {
         })
     },
 
-    changePaymentStatus:(orderId)=>{
-        return new Promise(async(resolve,reject)=>{
-            await orderModel.findOneAndUpdate({_id:orderId},{$set:{paymentStatus:"Paid"}}).then(()=>{
+    changePaymentStatus: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { paymentStatus: "Paid" } }).then(() => {
                 resolve()
             })
         })
@@ -256,7 +301,6 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let { coupon_code, discount, expiry_date } = data;
             discount = parseInt(discount)
-            console.log(discount);
             const newCoupon = new couponModel({
                 coupon_code,
                 discount,
@@ -268,17 +312,68 @@ module.exports = {
         })
     },
 
-    deleteCoupon: (id) =>{
-        return new Promise (async(resolve,reject)=>{
-            await couponModel.updateOne({_id:id},{$set:{is_deleted:true}})
+    deleteCoupon: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await couponModel.updateOne({ _id: id }, { $set: { is_deleted: true } })
             resolve()
         })
     },
 
-    restoreCoupon: (id)=>{
-        return new Promise (async(resolve,reject)=>{
-            await couponModel.updateOne({_id:id},{$set:{is_deleted:false}})
+    restoreCoupon: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await couponModel.updateOne({ _id: id }, { $set: { is_deleted: false } })
             resolve()
+        })
+    },
+
+    getBanners: () => {
+        return new Promise(async (resolve, reject) => {
+            await bannerModel.find({}).then((banners) => {
+                resolve(banners)
+            })
+        })
+    },
+
+    newBanner: (details, image) => {
+        return new Promise(async (resolve, reject) => {
+            const { bannerName, subTitle, title } = details
+            const newBanner = new bannerModel({
+                bannerName,
+                subTitle,
+                title,
+                imageUrl: image
+            })
+            newBanner
+                .save()
+                .then(() => resolve())
+        })
+    },
+
+    getBanner: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await bannerModel.findById(id).then(banner => resolve(banner))
+        })
+    },
+
+    editBanner: (id, details, image) => {
+        return new Promise(async (resolve, reject) => {
+            const { bannerName, subTitle, title } = details
+            if (image != null) {
+                await bannerModel.findByIdAndUpdate(id, { $set: { imageUrl: image[0] } })
+            }
+            await bannerModel.findByIdAndUpdate(id, {
+                $set: {
+                    bannerName,
+                    subTitle,
+                    title
+                }
+            }).then(() => resolve())
+        })
+    },
+
+    deleteBanner: (id) => {
+        return new Promise(async (resolve, reject) => {
+            await bannerModel.findByIdAndDelete(id).then(() => resolve())
         })
     }
 }

@@ -10,10 +10,8 @@ exports.login = (req, res) => {
   if (req.session.adminLogin) {
     res.redirect("/admin/dashboard");
   } else {
-    res.render("adminViews/adminLogin", {
-      loginErr: req.session.loginErr,
-      passwordErr: req.session.passwordErr,
-    });
+      let loginErr = req.session.loginErr,passwordErr = req.session.passwordErr
+      res.render("adminViews/adminLogin", {loginErr,passwordErr});
   }
 };
 
@@ -45,7 +43,10 @@ exports.logout = (req, res) => {
 
 // ADMIN HOME PAGE
 exports.adminHome = (req, res) => {
-  req.session.adminLogin ? res.render("adminViews/index") : res.redirect("/admin")
+  adminHelpers.dashboardDetails().then((response)=>{
+    let {allProducts,activeUsers,liveOrders,totalSales,onlinePayments, newOrders, newUsers, ordersToday} = response
+    res.render("adminViews/index", {moment,allProducts,activeUsers,liveOrders,totalSales, onlinePayments, newOrders, newUsers, ordersToday});
+  })
 };
 
 // ALL USERS
@@ -90,11 +91,8 @@ exports.addProduct = async (req, res) => {
 exports.newProduct = async (req, res) => {
 
   let data = req.body
-
   req.files.forEach(img => { });
-  console.log(req.files);
   const productImages = req.files != null ? req.files.map((img) => img.path) : null
-  console.log(productImages);
 
   adminHelpers.newProduct(data, productImages).then(() => {
     res.redirect("back");
@@ -103,7 +101,7 @@ exports.newProduct = async (req, res) => {
 
 // EDIT PRODUCT PAGE
 exports.editProduct = async (req, res) => {
-  adminHelpers.editProduct(req.params.id).then((result) => {
+  adminHelpers.editProduct(req.query.productId).then((result) => {
     const { product, categories } = result
     res.render("adminViews/editProduct", { product, categories });
   })
@@ -112,7 +110,7 @@ exports.editProduct = async (req, res) => {
 // EDIT PRODUCT
 exports.editDetails = async (req, res) => {
   const productImages = req.files.length != 0 ? req.files.map((img) => img.path) : null
-  adminHelpers.editProductDetails(req.params.id, req.body, productImages).then(() => {
+  adminHelpers.editProductDetails(req.query.productId, req.body, productImages).then(() => { 
     res.redirect('/admin/allProducts')
   })
 };
@@ -229,10 +227,54 @@ exports.restoreCoupon = (req,res) =>{
   })
 }
 
+// BANNER PAGE
+exports.banners = (req,res)=>{
+  adminHelpers.getBanners().then((banners)=>{
+    res.render('adminViews/banner',{banners})
+  })
+}
+
+// ADD BANNER FORM
+exports.addBanner = (req,res) =>{
+  res.render('adminViews/addBanner')
+}
+
+// NEW BANNER
+exports.newBanner = (req,res) =>{
+  req.files.forEach(img => { });
+  let image = req.files.map((img) => img.filename)
+  adminHelpers.newBanner(req.body,image[0]).then(()=>{
+    res.redirect('back')
+  })
+}
+
+// DELETE BANNER
+exports.deleteBanner =(req,res)=>{
+  adminHelpers.deleteBanner(req.query.id).then(()=>{
+    res.redirect('back')
+  })
+}
+
+// EDIT BANNER FORM
+exports.getBanner = (req,res)=>{
+  adminHelpers.getBanner(req.query.id).then((banner)=>{
+    res.render('adminViews/editBanner',{banner})
+  })
+}
+
+// EDIT BANNER
+exports.editBanner = (req,res)=>{
+    const image = req.files.length != 0 ? req.files.map((img) => img.filename) : null
+    adminHelpers.editBanner(req.query.id,req.body,image)
+    res.redirect('/admin/banners')
+  }
+
 // ORDERS
 exports.orders = (req, res) => {
-  adminHelpers.orders().then((orders)=>{
-    res.render("adminViews/orders",{orders,moment})
+  const page = parseInt(req.query.page) || 1;
+  adminHelpers.orders(page).then((response)=>{
+    let {orders,totalPages} = response
+    res.render("adminViews/orders",{orders,moment, page, totalPages})
   })
 };
 

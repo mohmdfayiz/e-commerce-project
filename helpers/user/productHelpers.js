@@ -1,11 +1,27 @@
 const productModel = require("../../model/productModel")
+const bannerModel = require("../../model/bannerModel")
 const cartModel = require("../../model/cartModel")
 
 exports.getProducts = () => {
     return new Promise(async (resolve, reject) => {
-        let products = await productModel.find({ isDeleted: false }).populate('category')
-        resolve(products)
+        await productModel.find({ isDeleted: false }).populate('category').then(async (products) => {
+            let banners = await bannerModel.find({})
+            resolve({ products, banners })
+        })
+    })
+}
 
+exports.allProducts = () => {
+    return new Promise(async (resolve, reject) => {
+        await productModel.find({ isDeleted: false }).populate('category').then((products) => {
+            resolve(products)
+        })
+    })
+}
+
+exports.sortProducts = (sort) => {
+    return new Promise(async (resolve, reject) => {
+        // await productModel.find({$or:[{price}]})
     })
 }
 
@@ -18,6 +34,7 @@ exports.getBikes = () => {
                 bikes.push(prodcut)
             }
         })
+        console.log(bikes);
         resolve(bikes)
     })
 }

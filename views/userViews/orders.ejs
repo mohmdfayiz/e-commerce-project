@@ -282,8 +282,8 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <!-- <th></th> -->
+                            <th>Date</th>
+                            <th>Product Name</th>
                             <!-- <th>Quantity</th> -->
                             <th>Total</th>
                             <th>Payment</th>
@@ -295,7 +295,7 @@
                         <% orders.forEach(function(order){ %>
                             <% order.products.forEach(function(product){ %>
                                 <tr>
-                                    <!-- <td><img src="< product.productId.imageUrl %>" style="width: 60px;" alt="productImage"></td> -->
+                                    <td><%=  moment(order.orderDate).format("LL") %></td>
                                     <td>
                                         <%= product.productId.productName %>
                                     </td>

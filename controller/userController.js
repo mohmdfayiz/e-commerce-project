@@ -11,27 +11,28 @@ const Razorpay = require('razorpay');
 
 // USER HOME PAGE
 exports.home = (req, res) => {
-  productHelpers.getProducts().then((products) => {
+  productHelpers.getProducts().then((response) => {
+
+    let {products, banners} = response
     let bikes = []
     let accessoriesNgadgets = []
     products.forEach(product => {
-      if (product.category.parentCategory === 'Bike') {
-        bikes.push(product)
-      } else {
-        accessoriesNgadgets.push(product)
-      }
+    product.category.parentCategory === 'Bike'? bikes.push(product) : accessoriesNgadgets.push(product)
     });
-    req.session.userLogin ?
+
+    if(req.session.userLogin ){
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
-        res.render("userViews/index", { bikes, accessoriesNgadgets, wishlistItems, login: true })
+        res.render("userViews/index", {banners, bikes, accessoriesNgadgets, wishlistItems, login: true })
       })
-      : res.render("userViews/index", { bikes, accessoriesNgadgets, login: false })
+    }else{
+      res.render("userViews/index", {banners, bikes, accessoriesNgadgets, login: false })
+    }
   })
 };
 
 // SHOP PAGE
 exports.allProducts = (req, res) => {
-  productHelpers.getProducts().then((products) => {
+  productHelpers.allProducts().then((products) => {
     let login = req.session.userLogin ? true : false
     res.render('userViews/shop', { products, login })
   })
@@ -329,7 +330,7 @@ exports.orderSuccess = (req, res) => {
 exports.orders = (req, res) => {
   let userId = req.session.user._id
   orderHelpers.orders(userId).then((orders) => {
-    res.render('userViews/orders', { orders })
+    res.render('userViews/orders', {moment, orders })
   })
 }
 

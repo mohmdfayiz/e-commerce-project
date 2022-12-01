@@ -8,7 +8,7 @@
           <h5 class="mb-0">Edit Product</h5>
         </div>
         <div class="card-body">
-          <form action="/admin/editProductDetails/<%= product._id %>" method="post" enctype="multipart/form-data">
+          <form action="/admin/editProduct?productId=<%= product._id %>" method="post" enctype="multipart/form-data">
             <div class="mb-3">
               <label for="exampleFormControlSelect1" class="form-label">Category</label>
               <select name="category" class="form-select" id="exampleFormControlSelect1" aria-label="select One">

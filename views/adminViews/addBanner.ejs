@@ -1,0 +1,42 @@
+<%- include('../layoutHeader.ejs') -%>
+
+  <!-- Basic Layout -->
+  <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-10 col-md-6">
+      <div class="card my-4">
+        <div class="card-header">
+          <h5 class="mb-0">Add Banner</h5>
+        </div>
+        <div class="card-body">
+          <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
+
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-company">Banner Name</label>
+              <input type="text" name="bannerName" class="form-control" id="basic-default-company" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-message">Sub Title</label>
+              <input id="basic-default-message" class="form-control"
+                name="subTitle" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="basic-default-message">Title</label>
+              <input id="basic-default-message" class="form-control" name="title">
+            </div>
+
+            <div class="mb-3">
+              <label for="formFile" class="form-label">Image</label>
+              <input class="form-control" type="file" accept="image/png, image/jpeg" id="formFile" name="image" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('../layoutFooter.ejs') -%>
