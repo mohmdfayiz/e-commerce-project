@@ -1,6 +1,7 @@
 const productModel = require("../../model/productModel")
 const bannerModel = require("../../model/bannerModel")
 const cartModel = require("../../model/cartModel")
+const subcategoryModel = require("../../model/subcategoryModel")
 
 exports.getProducts = () => {
     return new Promise(async (resolve, reject) => {
@@ -13,15 +14,46 @@ exports.getProducts = () => {
 
 exports.allProducts = () => {
     return new Promise(async (resolve, reject) => {
+        // let subcategories = await subcategoryModel.distinct('category')
+        let subcategories = await subcategoryModel.find()
         await productModel.find({ isDeleted: false }).populate('category').then((products) => {
-            resolve(products)
+            resolve({subcategories,products})
         })
     })
 }
 
-exports.sortProducts = (sort) => {
+exports.filterProducts = (filter) => {
     return new Promise(async (resolve, reject) => {
-        // await productModel.find({$or:[{price}]})
+        let subcategories = await subcategoryModel.find()
+        if(filter == "Newness"){
+            await productModel.find({isDeleted:false}).sort({createdAt:-1}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else if(filter == "lowToHigh"){
+            await productModel.find({isDeleted:false}).sort({price:1}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else if( filter == "highToLow"){
+            await productModel.find({isDeleted:false}).sort({price:-1}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else if(filter == 1000){
+            await productModel.find({isDeleted:false, price:{$lte:1000}}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else if(filter == 5000){
+            await productModel.find({isDeleted:false, price:{$lte:5000, $gte:1000}}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else if(filter == 10000){
+            await productModel.find({isDeleted:false, price:{$gte:10000}}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }else{
+            await productModel.find({isDeleted: false, category:filter}).then((products)=>{
+                resolve({subcategories,products})
+            })
+        }
     })
 }
 

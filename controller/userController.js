@@ -32,9 +32,32 @@ exports.home = (req, res) => {
 
 // SHOP PAGE
 exports.allProducts = (req, res) => {
-  productHelpers.allProducts().then((products) => {
-    let login = req.session.userLogin ? true : false
-    res.render('userViews/shop', { products, login })
+  let filter = req.query.filter ? req.query.filter : ""
+  productHelpers.allProducts(filter).then((response) => {
+    let {subcategories, products} = response
+    if(req.session.userLogin ){
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+      res.render('userViews/shop', {subcategories, products, wishlistItems, login:true })
+      })
+    }else{
+      res.render('userViews/shop', {subcategories, products, login:false })
+    }
+  })
+}
+
+// FILTER PRODUCTS
+exports.filterProducts = (req,res) =>{
+  let filter = req.params.filter
+  productHelpers.filterProducts(filter).then((response) => {
+    let {subcategories, products} = response
+    console.log(products);
+    if(req.session.userLogin ){
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+      res.render('userViews/shop', {subcategories, products, wishlistItems, login:true })
+      })
+    }else{
+      res.render('userViews/shop', {subcategories, products, login:false })
+    }
   })
 }
 

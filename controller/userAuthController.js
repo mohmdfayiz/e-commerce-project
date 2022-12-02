@@ -227,5 +227,5 @@ exports.updatePassword = (req,res) =>{
 // LOGOUT
 exports.logout = (req, res) => {
   req.session.destroy();
-  res.redirect("/");
+  res.redirect('/')
 };

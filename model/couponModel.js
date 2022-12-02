@@ -8,7 +8,7 @@ const couponShema = new mongoose.Schema({
     },
     discount:{
         type:Number,
-        default:false
+        required:true
     },
     created_date:{
         type:Date,

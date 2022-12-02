@@ -67,7 +67,7 @@ module.exports = {
                     }
                 }
             ])
-
+            console.log(online);
             const onlinePayments = online.map(a => a.total)
             const totalSales = sales.map(a => a.totalCount)
             resolve({ allProducts, activeUsers, liveOrders, totalSales, onlinePayments, newOrders, newUsers,ordersToday })

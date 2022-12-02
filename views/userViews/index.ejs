@@ -136,8 +136,7 @@
                       </button>
                       <% } %>
                         <% if ( login ) { %>
-                          <% let inWishlist=wishlistItems.some(item=> item._id.toString() === product._id.toString() )
-                            %>
+                          <% let inWishlist=wishlistItems.some(item=> item._id.toString() === product._id.toString() )%>
                             <% if(inWishlist) { %>
                               <button onclick="removeFromWishlist('<%= product._id %>','<%= product.productName %>')">
                                 <img class="icon-heart2 dis-block " src="/public/users/images/icons/icon-heart-02.png"
@@ -164,28 +163,6 @@
       <div class="p-b-10">
         <h3 class="ltext-103 cl5">Accessories & Gadgets</h3>
       </div>
-
-      <!-- <div class="flex-w flex-sb-m p-b-20">
-        <div class="flex-w flex-l-m filter-tope-group m-tb-10">
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-            All Bicycles
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Road`">
-            Road Bike
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Mountain">
-            Mountain Bike
-          </button>
-
-          <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".Hybrid">
-            Hybrid
-          </button>
-
-        </div>
-
-      </div> -->
       <div class="wrap-slick2">
         <div class="slick2">
           <% accessoriesNgadgets.forEach(function(product){ %>
@@ -231,14 +208,6 @@
                                 </button>
                                 <%}}%>
                   </div>
-                  <!-- <form action="/addToWishlist/" method="post"> -->
-                  <!-- <div class="block2-txt-child2 flex-r p-t-3">
-                    <button onclick="addToWishlist('<%= product._id %>','<%= product.productName %>')">
-                      <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
-                        alt="ICON" />
-                    </button>
-                  </div> -->
-                  <!-- </form> -->
                 </div>
               </div>
             </div>
@@ -246,12 +215,6 @@
         </div>
       </div>
 
-      <!-- Load more -->
-      <!-- <div class="flex-c-m flex-w w-full p-t-45">
-        <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-          Load More
-        </a>
-      </div> -->
     </div>
   </section>
 
