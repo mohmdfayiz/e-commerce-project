@@ -36,7 +36,7 @@ module.exports = {
                     let id = product.productId
                     let quantity = product.quantity * -1
                     await productModel.updateOne({ _id: id }, { $inc: { quantity } })
-                }
+                }  
                 await cartModel.findOneAndDelete({ userId })
                 await couponModel.findOneAndUpdate({ _id: coupon }, { $push: { users: userId } })
                 resolve()
@@ -62,7 +62,7 @@ module.exports = {
 
     cancelOrder: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.findByIdAndUpdate({ _id: orderId }, { $set: { orderStatus: "Cancelled" } })
+            await orderModel.findByIdAndUpdate({ _id: orderId }, { $set: { orderStatus: "Cancelled", modifiedDate:Date.now() } })
             resolve()
         })
     }

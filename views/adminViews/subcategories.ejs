@@ -39,7 +39,7 @@
       <div class="card mt-2 mx-4">
         <h5 class="card-header">Subcategories.</h5>
         <div class="table-responsive text-nowrap">
-          <table class="table table-hover">
+          <table class="table table-hover" id="table">
             <thead>
               <tr>
                 <th>Subcategory</th>
@@ -55,13 +55,9 @@
                 <td>
                   <div class="text-center">
                     <% if(!x.isDeleted){ %>
-                    <form action="/admin/deleteSubcategory/<%= x._id %>" method="post">
-                      <button type="submit" class="btn dropdown-item" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
+                      <button type="submit" class="btn dropdown-item" onclick="deleteSubcategory('<%= x._id %>')">Delete</button>
                     <% }else{ %>
-                    <form action="/admin/restoreSubcategory/<%= x._id %>" method="post">
-                      <button type="submit" class="btn dropdown-item" onclick="return confirm('Are you sure?')">Restore</button>
-                    </form>
+                      <button type="submit" class="btn dropdown-item" onclick="restoreSubcategory('<%= x._id %>')">Restore</button>
                     <% } %>
                   </div>
                 </td>
@@ -82,5 +78,60 @@
   <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
+<script>
+  const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
 
+    function deleteSubcategory(id) {
+      Swal.fire({
+        title: 'Are you sure?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Delete!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: '/admin/deleteSubcategory/' + id,
+            method: 'POST',
+            success: (response) => {
+              if (response.status) {
+                $("#table").load(" #table > *");
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Deleted successfully'
+                })
+              }
+            }
+          })
+        }
+      })
+    }
+
+    function restoreSubcategory(id) {
+      $.ajax({
+        url: '/admin/restoreSubcategory/' + id,
+        method: 'POST',
+        success: (response) => {
+          if (response.status) {
+            $("#table").load(" #table > *");
+            Toast.fire({
+              icon: 'success',
+              title: 'Restored successfully'
+            })
+          }
+        }
+      })
+    }
+</script>
 <%- include('../layoutFooter.ejs') -%>

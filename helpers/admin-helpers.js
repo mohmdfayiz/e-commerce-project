@@ -5,7 +5,6 @@ const subcategoryModel = require("../model/subcategoryModel")
 const orderModel = require('../model/orderModel');
 const bcrypt = require('bcrypt');
 const { login } = require('../controller/adminController');
-const addressModel = require('../model/addressModel');
 const couponModel = require('../model/couponModel');
 const bannerModel = require('../model/bannerModel')
 
@@ -50,27 +49,21 @@ module.exports = {
             start.setHours(0, 0, 0, 0);
             let end = new Date();
             end.setHours(23, 59, 59, 999);
-            let ordersToday = await orderModel.find({orderDate: {$gte: start, $lt: end}}).countDocuments()
+            let ordersToday = await orderModel.find({ orderDate: { $gte: start, $lt: end } }).countDocuments()
 
             let online = await orderModel.aggregate([
-                { '$match': { 'paymentMethod': 'Razorpay' } },
+                { '$match': { $and: [{ 'paymentMethod': 'Razorpay' }, { 'orderStatus': { '$ne': 'Cancelled' } }] } },
                 { '$group': { '_id': null, 'total': { '$sum': "$grandTotal" } } }
             ])
 
             let sales = await orderModel.aggregate([
-                {
-                    '$group': {
-                        '_id': null,
-                        'totalCount': {
-                            '$sum': '$grandTotal'
-                        }
-                    }
-                }
+                { '$match': { 'orderStatus': { '$ne': 'Cancelled' } } },
+                { '$group': { '_id': null, 'totalCount': { '$sum': '$grandTotal' } } }
             ])
             console.log(online);
             const onlinePayments = online.map(a => a.total)
             const totalSales = sales.map(a => a.totalCount)
-            resolve({ allProducts, activeUsers, liveOrders, totalSales, onlinePayments, newOrders, newUsers,ordersToday })
+            resolve({ allProducts, activeUsers, liveOrders, totalSales, onlinePayments, newOrders, newUsers, ordersToday })
         })
     },
 
@@ -262,7 +255,7 @@ module.exports = {
             let skip = (page - 1) * productsPerPage
 
             await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').skip(skip).limit(productsPerPage).then(async (orders) => {
-                resolve({orders,totalPages})
+                resolve({ orders, totalPages })
             })
         })
     },
@@ -277,7 +270,7 @@ module.exports = {
 
     changeOrderStatus: (orderId, status) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status } }).then(() => {
+            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status, modifiedDate: Date.now() } }).then(() => {
                 resolve()
             })
         })
@@ -285,7 +278,7 @@ module.exports = {
 
     changePaymentStatus: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { paymentStatus: "Paid" } }).then(() => {
+            await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { paymentStatus: "Paid", modifiedDate: Date.now() } }).then(() => {
                 resolve()
             })
         })

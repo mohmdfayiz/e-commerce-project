@@ -13,19 +13,19 @@ const Razorpay = require('razorpay');
 exports.home = (req, res) => {
   productHelpers.getProducts().then((response) => {
 
-    let {products, banners} = response
+    let { products, banners } = response
     let bikes = []
     let accessoriesNgadgets = []
     products.forEach(product => {
-    product.category.parentCategory === 'Bike'? bikes.push(product) : accessoriesNgadgets.push(product)
+      product.category.parentCategory === 'Bike' ? bikes.push(product) : accessoriesNgadgets.push(product)
     });
 
-    if(req.session.userLogin ){
+    if (req.session.userLogin) {
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
-        res.render("userViews/index", {banners, bikes, accessoriesNgadgets, wishlistItems, login: true })
+        res.render("userViews/index", { banners, bikes, accessoriesNgadgets, wishlistItems, login: true })
       })
-    }else{
-      res.render("userViews/index", {banners, bikes, accessoriesNgadgets, login: false })
+    } else {
+      res.render("userViews/index", { banners, bikes, accessoriesNgadgets, login: false })
     }
   })
 };
@@ -34,29 +34,29 @@ exports.home = (req, res) => {
 exports.allProducts = (req, res) => {
   let filter = req.query.filter ? req.query.filter : ""
   productHelpers.allProducts(filter).then((response) => {
-    let {subcategories, products} = response
-    if(req.session.userLogin ){
+    let { subcategories, products } = response
+    if (req.session.userLogin) {
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
-      res.render('userViews/shop', {subcategories, products, wishlistItems, login:true })
+        res.render('userViews/shop', { subcategories, products, wishlistItems, login: true })
       })
-    }else{
-      res.render('userViews/shop', {subcategories, products, login:false })
+    } else {
+      res.render('userViews/shop', { subcategories, products, login: false })
     }
   })
 }
 
 // FILTER PRODUCTS
-exports.filterProducts = (req,res) =>{
+exports.filterProducts = (req, res) => {
   let filter = req.params.filter
   productHelpers.filterProducts(filter).then((response) => {
-    let {subcategories, products} = response
+    let { subcategories, products } = response
     console.log(products);
-    if(req.session.userLogin ){
+    if (req.session.userLogin) {
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
-      res.render('userViews/shop', {subcategories, products, wishlistItems, login:true })
+        res.render('userViews/shop', { subcategories, products, wishlistItems, login: true })
       })
-    }else{
-      res.render('userViews/shop', {subcategories, products, login:false })
+    } else {
+      res.render('userViews/shop', { subcategories, products, login: false })
     }
   })
 }
@@ -64,24 +64,40 @@ exports.filterProducts = (req,res) =>{
 // BIKES PAGE
 exports.bikes = (req, res) => {
   productHelpers.getBikes().then((bikes) => {
-    let login = req.session.userLogin ? true : false
-    res.render('userViews/bikes', { login, bikes })
+    if (req.session.userLogin) {
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+        res.render('userViews/bikes', { login: true, bikes, wishlistItems })
+      })
+    } else {
+      res.render('userViews/bikes', { login: false, bikes })
+    }
   })
 };
 
 // ACCESSORIES PAGE
 exports.accessories = (req, res) => {
   productHelpers.getAccessories().then((accessories) => {
-    let login = req.session.userLogin ? true : false
-    res.render('userViews/accessories-page', { login, accessories })
+    if (req.session.userLogin) {
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+        res.render('userViews/accessories-page', { login: true, accessories, wishlistItems })
+      })
+    } else {
+      res.render('userViews/accessories-page', { login: false, accessories })
+
+    }
   })
 };
 
 // GADGETS PAGE
 exports.gadgets = (req, res) => {
   productHelpers.getGadgets().then((gadgets) => {
-    let login = req.session.userLogin ? true : false
-    res.render('userViews/gadgets-page', { login, gadgets })
+    if (req.session.userLogin) {
+      wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
+        res.render('userViews/gadgets-page', { login: true, gadgets, wishlistItems })
+      })
+    } else {
+      res.render('userViews/gadgets-page', { login: false, gadgets })
+    }
   })
 };
 
@@ -185,7 +201,7 @@ exports.wishlist = (req, res) => {
 // ADD TO WISHLIST
 exports.addToWishlist = async (req, res) => {
   let productId = req.params.productId
-  let userId = req.session.user._id 
+  let userId = req.session.user._id
   await wishlistHelpers.addto_wishlist(userId, productId)
   res.json({ status: true })
 }
@@ -353,7 +369,7 @@ exports.orderSuccess = (req, res) => {
 exports.orders = (req, res) => {
   let userId = req.session.user._id
   orderHelpers.orders(userId).then((orders) => {
-    res.render('userViews/orders', {moment, orders })
+    res.render('userViews/orders', { moment, orders })
   })
 }
 
@@ -361,6 +377,7 @@ exports.orders = (req, res) => {
 exports.orderDetails = (req, res) => {
   let orderId = req.params.orderId
   orderHelpers.orderDetails(orderId).then((order) => {
+    console.log(order);
     res.render('userViews/orderDetails', { order, moment })
   })
 }

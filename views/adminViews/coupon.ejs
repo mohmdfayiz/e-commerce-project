@@ -29,7 +29,7 @@
             <div class="card mt-2 mx-4">
               <h5 class="card-header">Coupons.</h5>
               <div class="table-responsive text-nowrap" id="table">
-                <table class="table table-hover" >
+                <table class="table table-hover">
                   <thead>
                     <tr>
                       <th>Coupon code</th>
@@ -107,6 +107,18 @@
       })
     })
 
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
     function deleteCoupon(id) {
       let couponCode = document.getElementById("couponCode").value;
       Swal.fire({
@@ -124,11 +136,10 @@
             success: (response) => {
               if (response) {
                 $("#table").load(" #table > *");
-                Swal.fire(
-                  'Deleted!',
-                  'Coupon deleted successfully.',
-                  'success'
-                )
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Deleted successfully'
+                })
               }
             }
           })
@@ -139,18 +150,15 @@
     function restoreCoupon(id) {
       let couponCode = document.getElementById("couponCode").value;
       $.ajax({
-        url:'/admin/couponAction/' + id,
-        method:'PATCH',
-        success:(response)=>{
-          if(response.status){
-            Swal.fire({
+        url: '/admin/couponAction/' + id,
+        method: 'PATCH',
+        success: (response) => {
+          if (response.status) {
+            $("#table").load(" #table > *");
+            Toast.fire({
               icon: 'success',
-              title: couponCode,
-              text: 'Restored successfully!',
-              showConfirmButton: false,
-              timer: 1500
+              title: 'Restored successfully'
             })
-            location.reload()
           }
         }
       })

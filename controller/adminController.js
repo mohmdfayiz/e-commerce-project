@@ -1,5 +1,5 @@
 const session = require("express-session");
-const { isObjectIdOrHexString } = require("mongoose");
+const { isObjectIdOrHexString, trusted } = require("mongoose");
 const { populate } = require("../model/productModel");
 const adminHelpers = require('../helpers/admin-helpers');
 const { response } = require("express");
@@ -59,14 +59,14 @@ exports.allUsers = async (req, res) => {
 // BLOCK USER
 exports.blockUser = async (req, res) => {
   adminHelpers.blockUser(req.params.id).then(() => {
-    res.redirect("/admin/allUsers");
+    res.json(true);
   })
 };
 
 // UNBLOCK USER
 exports.unblockUser = async (req, res) => {
   adminHelpers.unblockUser(req.params.id).then(() => {
-    res.redirect("/admin/allUsers");
+    res.json(true)
   });
 };
 
@@ -118,7 +118,7 @@ exports.editDetails = async (req, res) => {
 //  DELETE PRODUCT
 exports.deleteProduct = async (req, res) => {
   adminHelpers.deleteProduct(req.params.id).then(() => {
-    res.redirect("/admin/allProducts");
+    res.json({status:true})
   })
 };
 
@@ -133,7 +133,7 @@ exports.deletedProducts = async (req, res) => {
 exports.undoDeleteProduct = (req, res) => {
   let id = req.params.id;
   adminHelpers.restoreProduct(id).then(() => {
-    res.redirect("/admin/deletedProducts");
+    res.json({status:true})
   })
 };
 
@@ -156,14 +156,14 @@ exports.addCatergory = (req, res) => {
 exports.deleteCategory = (req, res) => {
   let id = req.params.id;
   adminHelpers.deleteCategory(id).then(() => {
-    res.redirect("/admin/categories");
+    res.json({status:true})
   })
 };
 
 // RESTORE CATOGORY
 exports.restoreCategory = (req, res)=>{
   adminHelpers.restoreCategory(req.params.id).then(()=>{
-    res.redirect('/admin/categories')
+    res.json({status:true})
   })
 }
 
@@ -185,14 +185,14 @@ exports.addSubcatergory = (req, res) => {
 // DELETE SUBCATEGORY
 exports.deleteSubcategory = (req, res) =>{
   adminHelpers.deleteSubcategories(req.params.id).then(()=>{
-    res.redirect('/admin/subcategories')
+    res.json({status:true})
   })
 }
 
 // RESTORE SUBCATEGORIES
 exports.restoreSubcategory = (req,res) =>{
   adminHelpers.restoreSubcategory(req.params.id).then(()=>{
-    res.redirect('/admin/subcategories')
+    res.json({status:true})
   })
 } 
 
@@ -251,7 +251,7 @@ exports.newBanner = (req,res) =>{
 // DELETE BANNER
 exports.deleteBanner =(req,res)=>{
   adminHelpers.deleteBanner(req.query.id).then(()=>{
-    res.redirect('back')
+    res.json({status:true})
   })
 }
 

@@ -90,6 +90,9 @@
         <div class="p-2">
           <span>Order Id : <%= order._id%></span><br>
           <span>Order date : <%= moment(order.orderDate).format("LL") %> </span><br>
+          <% if(order.orderStatus != 'Order Placed'){ %> 
+            <span class="card-text"><%= order.orderStatus %> At : <%= moment(order.modifiedDate).format("LL") %></span><br>
+            <% } %>
           <span>Delivery date : <%= moment(order.deliveryDate).format("LL") %> </span><br>
           <span>Payment Method : <%= order.paymentMethod %></span><br>
           <span>Payment Status : <%= order.paymentStatus %></span><br>

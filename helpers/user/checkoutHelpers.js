@@ -16,7 +16,7 @@ module.exports = {
 
     applyCoupon: (userId, couponCode) => {
         return new Promise(async (resolve, reject) => {
-            await couponModel.findOne({ coupon_code: couponCode }).then(async (coupon) => {
+            await couponModel.findOne({ coupon_code: couponCode, is_deleted:false, expiry_date:{$gte:Date.now()} }).then(async (coupon) => {
                 if (coupon) {
                     let exist = await couponModel.findOne({coupon_code:couponCode, users: { $in: userId } })
                     if(exist){

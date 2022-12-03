@@ -18,7 +18,7 @@
       <div class="card mt-4 mx-4">
         <h5 class="card-header">Deleted Products</h5>
         <div class="table-responsive">
-          <table class="table table-hover">
+          <table class="table table-hover" id="productTable">
             <thead>
               <tr>
                 <th>Category</th>
@@ -30,7 +30,7 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody class="table-border-bottom-0">
+            <tbody class="table-border-bottom-0" >
               <% product.forEach(function(x){ %>
               <tr>
                 <td>
@@ -49,13 +49,8 @@
                 </td>
                 <td>
                   <div class="dropdown">
-                    <!-- <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                          </button> -->
                     <div>
-                      <form action="/admin/undoDeleteProduct/<%= x._id %>" method="post">
-                        <button class="btn dropdown-item" type="submit" onclick="return confirm('Are you sure?')"><i class="bx bx-trash me-1"></i>Undo</button>
-                      </form>
+                        <button class="btn dropdown-item" type="submit" onclick="restoreProduct('<%= x._id %>')"></i>Undo</button>
                     </div>
                   </div>
                 </td>
@@ -76,5 +71,45 @@
   <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-
+<script>
+  function restoreProduct(id) {
+      Swal.fire({
+        title: 'Are you sure?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Restore.'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: '/admin/undoDeleteProduct/' + id,
+            method: 'post',
+            success: (response) => {
+              if (response.status) {
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 1500,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  }
+                })
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Restored successfully'
+                })
+                $("#productTable").load(" #productTable > *");
+              }else{
+                alert("Something went wrong!")
+              }
+            }
+          })
+        }
+      })
+    }
+</script>
 <%- include('../layoutFooter.ejs') -%>

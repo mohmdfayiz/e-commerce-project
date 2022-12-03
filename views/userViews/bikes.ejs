@@ -52,11 +52,33 @@
                             </span>
                         </div>
 
-                        <div class="block2-txt-child2 flex-r p-t-3 js-addwish-b2">
-                            <button onclick="addToWishlist('<%= bike._id %>','<%= bike.productName %>')">
-                              <img class="icon-heart1 dis-block trans-04" src="/public/users/images/icons/icon-heart-01.png"
-                                alt="ICON" />
-                            </button>
+                        <div class="block2-txt-child2 flex-r p-t-3">
+                            <% if(!login){ %>
+                                <button
+                                    onclick="addToWishlist('<%= bike._id %>','<%= bike.productName %>')">
+                                    <img class="icon-heart1 dis-block "
+                                        src="/public/users/images/icons/icon-heart-01.png" alt="ICON" />
+                                </button>
+                                <% } %>
+                                    <% if ( login ) { %>
+                                        <% let inWishlist=wishlistItems.some(item=> item._id.toString() ===
+                                            bike._id.toString() )
+                                            %>
+                                            <% if(inWishlist) { %>
+                                                <button
+                                                    onclick="removeFromWishlist('<%= bike._id %>','<%= bike.productName %>')">
+                                                    <img class="icon-heart2 dis-block "
+                                                        src="/public/users/images/icons/icon-heart-02.png"
+                                                        alt="ICON">
+                                                </button>
+                                                <%}else{%>
+                                                    <button
+                                                        onclick="addToWishlist('<%= bike._id %>','<%= bike.productName %>')">
+                                                        <img class="icon-heart1 dis-block "
+                                                            src="/public/users/images/icons/icon-heart-01.png"
+                                                            alt="ICON" />
+                                                    </button>
+                                                    <%}}%>
                         </div>
                     </div>
                 </div>
@@ -67,29 +89,50 @@
 </div>
 
 <script>
-    function addToWishlist(productId,productName) {
-      $.ajax({
-        url: '/addToWishlist/' + productId,
-        method: 'post',
-        success: (response) => {
-          if (response.status) {
-            Swal.fire({
-
-              icon: 'success',
-              text: productName+' added to wishlist.',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          } else {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Oops...',
-              text: 'Please signin for add to wishlist!',
-            })
-          }
+    function reload() {
+            location.reload()
         }
-      })
-    }
+        function addToWishlist(productId, productName) {
+            $.ajax({
+                url: '/addToWishlist/' + productId,
+                method: 'post',
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: productName,
+                            text: ' Added to wishlist!',
+                            showConfirmButton: false,
+                        })
+                        setTimeout(reload, 100)
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Oops...',
+                            text: 'Please signin for add to wishlist!',
+                        })
+                    }
+                }
+            })
+        }
+
+        function removeFromWishlist(productId, productName) {
+            $.ajax({
+                url: '/removeWishlistItem/' + productId,
+                method: 'post',
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: productName,
+                            text: 'Removed from wishlist.',
+                            showConfirmButton: false,
+                        })
+                        setTimeout(reload, 100)
+                    }
+                }
+            })
+        }
 
   </script>
 

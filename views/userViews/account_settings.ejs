@@ -1,7 +1,7 @@
 <%- include('./profileHeader.ejs') -%> 
 
     <div class="d-none d-lg-block" style="height:100px;"></div>
-    <section>
+    <section class="container">
         <div class="container">
             <div class="row"
                 style="background-image: linear-gradient(to right,#696cff,#9697f8) ;border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
@@ -32,7 +32,7 @@
     </section>
 
     <section class="container my-5">
-        <div class="row d-flex justify-content-around align-items-center">
+        <div class="row d-flex justify-content-around align-items-center mx-2">
 
             <div class="col-md-6 p-3"
                 style="background-color:#f5f5f5 ; border-radius: 8px;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
@@ -46,7 +46,7 @@
                 </form>
             </div>
 
-            <div class="col-md-4 p-3 mt-4 mt-md-0" id="pswrd"
+            <div class="col-md-4 p-3 mt-4 mt-md-0 " id="pswrd"
                 style="background-color:#f5f5f5 ; border-radius: 8px;  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
                 <strong>Change Password</strong>
                 <label for="inputPassword5" class="form-label mt-3">New Password</label>
@@ -83,7 +83,7 @@
         function changePassword() {
             let password1 = document.getElementById("password1").value;
             let password2 = document.getElementById("password2").value;
-            password1 == password2 ?
+            password1 == password2 && password1 != "" ?
                 $.ajax({
                     url: "/accountSettings",
                     data: {

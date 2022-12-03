@@ -1,7 +1,7 @@
 <%- include('./profileHeader.ejs') -%> 
 
     <div class="d-none d-lg-block" style="height:100px;"></div>
-    <section>
+    <section class="container">
         <div class="container">
             <div class="row"
                 style="background-image: linear-gradient(to right,#696cff,#9697f8) ;border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
@@ -30,61 +30,85 @@
     </section>
 
     <section class="container">
-        <!-- Basic Bootstrap Table -->
-        <div class="card my-5">
-            <div class="table-responsive text-nowrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Product Name</th>
-                            <!-- <th>Quantity</th> -->
-                            <th>Total</th>
-                            <th>Payment</th>
-                            <th>Status</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                        <% orders.forEach(function(order){ %>
-                            <% order.products.forEach(function(product){ %>
-                                <tr>
-                                    <td><%=  moment(order.orderDate).format("LL") %></td>
-                                    <td>
-                                        <%= product.productId.productName %>
-                                    </td>
-                                    <!-- <td>
-                                        <%= product.quantity %>
-                                    </td> -->
-                                    <td>
-                                        <%= product.total %>
-                                    </td>
-                                    <td>
-                                        <%= order.paymentMethod %>
-                                    </td>
-                                    <td>
-                                        <% if(order.orderStatus === "Packed"){ %> 
-                                        <span class="badge bg-label-info me-1">Packed</span>
-                                        <% }else if(order.orderStatus === "Shipped"){ %> 
-                                        <span class="badge bg-label-primary me-1">Shipped</span>
-                                        <% }else if(order.orderStatus === "Delivered"){ %>
-                                        <span class="badge bg-label-success me-1">Delivered</span>
-                                        <% }else if(order.orderStatus === "Cancelled"){ %> 
-                                        <span class="badge bg-label-danger me-1">Cancelled</span>
-                                        <% }else{ %> 
-                                        <span class="badge bg-label-warning me-1">Processing</span>
-                                        <% } %> 
-                                    <td>
-                                        <a href="/orderDetails/<%= order._id %> "><span class="material-symbols-outlined text-secondary">info</span></a>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                    <% }) %>
-                    </tbody>
-                </table>
+        <div class="container my-5">
+            <div class="row" id="orderCard">
+                <% orders.forEach(function(order){ %>
+                    <% order.products.forEach(function(product){ %>
+                <div class="card mb-3">
+                    <div class="row g-0">
+                      <div class="col-5 col-md-2">
+                        <img class="card-img card-img-left" src="/<%= product.productId.imageUrl[0] %>" alt="Card image" style="height: 150px; width: 120px; object-fit: cover;"/>
+                      </div>
+                      <div class="col-6 col-md-4">
+                        <div class="card-body">
+                          <h5 class="card-title"> <%= product.productId.productName %></h5>
+                          </span><strong class="card-text">Price :  <%= product.productId.price %></strong><br>
+                          <strong class="card-text">Qty :  <%= product.quantity %></strong><br>
+                          <strong class="card-text">Total :  <%= product.total %></strong><br>
+                          <% if(order.orderStatus != 'Order Placed'){ %> 
+                          <p class="card-text"><small class="text-muted"><%= order.orderStatus %> At : <%= moment(order.modifiedDate).format("LL") %> </small></p>
+                          <% } %> 
+                            <% if(order.orderStatus != "Cancelled" && order.orderStatus != "Delivered"){ %> 
+                          <p class="card-text"><small class="text-muted">Expected delivery Date : <%= moment(order.deliveryDate).format("LL") %> </small></p>
+                          <% } %> 
+                        </div>
+                      </div>
+                        <div class="col-md-4 m-2 d-flex align-items-center justify-content-center">
+                            <strong>Order status : </strong>
+                            <% if(order.orderStatus === "Packed"){ %> 
+                                <span class="badge bg-label-info me-1">Packed</span>
+                                <% }else if(order.orderStatus === "Shipped"){ %> 
+                                <span class="badge bg-label-primary me-1">Shipped</span>
+                                <% }else if(order.orderStatus === "Delivered"){ %>
+                                <span class="badge bg-label-success me-1">Delivered</span>
+                                <% }else if(order.orderStatus === "Cancelled"){ %> 
+                                <span class="badge bg-label-danger me-1">Cancelled</span>
+                                <% }else{ %> 
+                                <span class="badge bg-label-warning me-1">Processing</span>
+                                <% } %> 
+                        </div>
+                      <div class="col-md-1 d-flex align-items-center justify-content-center m-2">
+                          <a class="btn btn-outline-primary " href="/orderDetails/<%= order._id %> ">Invoice</a>
+                          <% if(order.orderStatus !="Cancelled" && order.orderStatus !="Delivered" ){ %>
+                            <button id="cancelBtn" class="btn btn-outline-danger m-2" onclick="cancelOrder('<%= order._id %>')">Cancel</button>
+                        <% }%>
+                      </div>
+                    </div>
+                  </div>
+                  <% }) %> 
+                  <% }) %> 
             </div>
         </div>
-        <!--/ Basic Bootstrap Table -->
     </section>
-    
+    <script>
+        function cancelOrder(orderId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Cancel order'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/cancelOrder/' + orderId,
+                        method: 'post',
+                        success: (response) => {
+                            if (response) {
+                                $("#orderStatus").load(" #orderStatus > *");
+                                Swal.fire(
+                                    'Cancelled!',
+                                    'Your order has been cancelled.',
+                                    'success'
+                                )
+                            }
+                        }
+                    })
+                    $("#orderCard").load(" #orderCard > *")
+                }
+            })
+        }
+    </script>
     <%- include('../userFooter.ejs') -%> 

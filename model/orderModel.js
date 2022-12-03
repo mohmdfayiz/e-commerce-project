@@ -42,7 +42,9 @@ const orderSchema = new mongoose.Schema({
         type:Date,
         default:Date.now()
     },
-    deliveryDate:{type:Date}
+    deliveryDate:{type:Date},
+    modifiedDate:{type:Date}
+
 })
 
 module.exports = Order = mongoose.model('Order',orderSchema);

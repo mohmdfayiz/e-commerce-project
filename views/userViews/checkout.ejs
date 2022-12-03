@@ -280,6 +280,7 @@
         function applyCoupon() {
             let coupon_code = document.getElementById("coupon").value
             if (coupon_code != "") {
+
                 $.ajax({
                     url: '/applyCoupon/' + coupon_code,
                     method: 'POST',
@@ -325,7 +326,6 @@
                 },
                 method: 'post',
                 success: (response) => {
-                    console.log(response);
                     if (response.codSuccess) {
                         location.href = "/orderSuccess"
                     } else {
