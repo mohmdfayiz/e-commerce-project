@@ -34,7 +34,7 @@
                     <% orders.forEach(function(order){ %>
                       <tr>
                         <td>
-                          <%= order._id %>
+                          <%= String(order._id).slice(10) %>
                         </td>
                         <td>
                           <%= moment(order.orderDate).format("LL") %>

@@ -262,7 +262,7 @@ module.exports = {
 
     orderDetails: (orderId) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.findById(orderId).populate('products.productId').then((order) => {
+            await orderModel.findById(orderId).populate('products.productId').populate('discount.couponId').then((order) => {
                 resolve(order)
             })
         })

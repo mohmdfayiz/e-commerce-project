@@ -282,6 +282,7 @@ exports.orders = (req, res) => {
 exports.orderDetails = (req,res) =>{
   let orderId = req.params.orderId
   adminHelpers.orderDetails(orderId).then((order)=>{
+    console.log(order);
     res.render("adminViews/orderDetails",{order,moment})
   })
 }

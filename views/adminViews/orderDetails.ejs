@@ -89,6 +89,9 @@
         <h5 class="p-2">Other Details</h5>
         <div class="p-2">
           <span>Order Id : <%= order._id%></span><br>
+          <% if(order.discount.amount){ %> 
+            <span>Coupon used : <%= order.discount.couponId.coupon_code %> </span><br>
+          <% } %> 
           <span>Order date : <%= moment(order.orderDate).format("LL") %> </span><br>
           <% if(order.orderStatus != 'Order Placed'){ %> 
             <span class="card-text"><%= order.orderStatus %> At : <%= moment(order.modifiedDate).format("LL") %></span><br>
@@ -151,6 +154,7 @@
         success: (response) => {
           if (response) {
             $("#orderStatus").load(" #orderStatus > *");
+            $("#details").load(" #details > *");
             Swal.fire({
               icon: 'success',
               title: Status,
