@@ -314,7 +314,6 @@ exports.placeOrder = (req, res) => {
 
   checkoutHelpers.placeOrder(userId).then((response) => {
     let { cartId, total } = response
-    console.log(response);
     if (paymentMethod == 'COD') {
       orderHelpers.createOrder(userId, index, paymentMethod).then(() => {
         res.json({ codSuccess: true })
@@ -332,7 +331,6 @@ exports.placeOrder = (req, res) => {
         receipt: "" + cartId,
 
       }, function (err, order) {
-        console.log(err);
         res.json(order)
       })
     }

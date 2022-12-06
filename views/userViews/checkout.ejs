@@ -52,7 +52,8 @@
                                     <div class="card card-body">
                                         <% address.forEach(function(adrs,index){ %>
                                             <div class="form-check card card-body">
-                                                <input class="form-check-input" type="radio" value="<%= index %>" name="index" id="exampleRadios1">
+                                                <input class="form-check-input" type="radio" value="<%= index %>"
+                                                    name="index" id="exampleRadios1">
                                                 <label class="form-check-label" for="exampleRadios1">
                                                     <p><strong>Full Name :</strong>
                                                         <%= adrs.fullName %>
@@ -285,7 +286,7 @@
                     url: '/applyCoupon/' + coupon_code,
                     method: 'POST',
                     success: (response) => {
-                        if(response.exist){
+                        if (response.exist) {
                             Swal.fire({
                                 icon: 'error',
                                 title: coupon_code,
@@ -293,13 +294,13 @@
                                 showConfirmButton: true,
                             })
                         }
-                        else if(response) {
+                        else if (response) {
                             Swal.fire({
                                 icon: 'success',
                                 title: coupon_code,
                                 text: 'Coupon applied successfully',
                                 showConfirmButton: false,
-                                timer:1500
+                                timer: 1500
                             })
                             $("#order").load(" #order > *")
                         } else {
@@ -315,76 +316,87 @@
         }
 
         function placeOrder(index) {
-            let adrsIndex = parseInt(index)
-            let paymentMethod = document.getElementById("cod").checked ? "COD" : "Razorpay"
 
-            $.ajax({
-                url: '/placeOrder',
-                data: {
-                    paymentMethod: paymentMethod,
-                    index: adrsIndex
-                },
-                method: 'post',
-                success: (response) => {
-                    if (response.codSuccess) {
-                        location.href = "/orderSuccess"
-                    } else {
-                        razorpayPayment(response)
-                    }
-                }
-            })
+            if (index < 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'There is no address!',
+                    text: 'Please add an address.',
+                })
+            } else {
 
-            function razorpayPayment(order) {
-                var options = {
-                    "key": "rzp_test_nOABmeWu0jJGLN", // Enter the Key ID generated from the Dashboard
-                    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                    "currency": "INR",
-                    "name": "Ride",
-                    "description": "Test Transaction",
-                    "image": "https://example.com/your_logo",
-                    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                    "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
-                    "handler": function (response) {
-                        verifyPayment(response, order)
-                    },
-                    "prefill": {
-                        "name": "Gaurav Kumar",
-                        "email": "gaurav.kumar@example.com",
-                        "contact": "9999999999"
-                    },
-                    "notes": {
-                        "address": "Razorpay Corporate Office"
-                    },
-                    "theme": {
-                        "color": "#7c7efc"
-                    }
-                };
-                function verifyPayment(payment, order) {
+                let adrsIndex = parseInt(index)
+                let paymentMethod = document.getElementById("cod").checked ? "COD" : "Razorpay"
 
-                    $.ajax({
-                        url: '/verifyPayment',
-                        method: 'post',
-                        data: {
-                            payment,
-                            order,
-                            adrsIndex
-                        },
-                        success: (response) => {
-                            if (response.status) {
-                                location.href = "/orderSuccess"
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Something went wrong!',
-                                })
-                            }
+                $.ajax({
+                    url: '/placeOrder',
+                    data: {
+                        paymentMethod: paymentMethod,
+                        index: adrsIndex
+                    },
+                    method: 'post',
+                    success: (response) => {
+                        if (response.codSuccess) {
+                            location.href = "/orderSuccess"
+                        } else {
+                            razorpayPayment(response)
                         }
-                    })
-                }
-                var rzp1 = new Razorpay(options);
-                rzp1.open();
+                    }
+                })
 
+                function razorpayPayment(order) {
+                    var options = {
+                        "key": "rzp_test_nOABmeWu0jJGLN", // Enter the Key ID generated from the Dashboard
+                        "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "currency": "INR",
+                        "name": "Ride",
+                        "description": "Test Transaction",
+                        "image": "https://example.com/your_logo",
+                        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                        "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+                        "handler": function (response) {
+                            verifyPayment(response, order)
+                        },
+                        "prefill": {
+                            "name": "Gaurav Kumar",
+                            "email": "gaurav.kumar@example.com",
+                            "contact": "9999999999"
+                        },
+                        "notes": {
+                            "address": "Razorpay Corporate Office"
+                        },
+                        "theme": {
+                            "color": "#7c7efc"
+                        }
+                    };
+                    function verifyPayment(payment, order) {
+
+                        $.ajax({
+                            url: '/verifyPayment',
+                            method: 'post',
+                            data: {
+                                payment,
+                                order,
+                                adrsIndex
+                            },
+                            success: (response) => {
+                                if (response.status) {
+                                    location.href = "/orderSuccess"
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong!',
+                                    })
+                                }
+                            }
+                        })
+                    }
+
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+
+                }
             }
         }
     </script>

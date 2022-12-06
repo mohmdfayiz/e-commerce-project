@@ -54,7 +54,7 @@ const userRouter = require("./routes/user");
 app.use("/admin", adminRouter);
 app.use("/", userRouter);
 app.use("*",(req,res)=>{
-  res.render('err')
+  res.render('404')
 })
 
 app.listen("8080", () => {
