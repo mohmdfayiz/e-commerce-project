@@ -38,10 +38,7 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default: 'Order Placed'
     },
-    orderDate: {
-        type: Date,
-        default: Date.now()
-    },
+    orderDate: {type: Date},
     deliveryDate: { type: Date },
     modifiedDate: { type: Date }
 

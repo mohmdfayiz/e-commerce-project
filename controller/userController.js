@@ -367,6 +367,7 @@ exports.orderSuccess = (req, res) => {
 exports.orders = (req, res) => {
   let userId = req.session.user._id
   orderHelpers.orders(userId).then((orders) => {
+    console.log(orders);
     res.render('userViews/orders', { moment, orders })
   })
 }

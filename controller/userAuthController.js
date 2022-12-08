@@ -196,7 +196,7 @@ exports.resend = (req, res) => {
     }
     console.log('Message sent: %s', info.messageId);
     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    res.redirect('/forgotpassword');
+    res.redirect('/emailVarification');
   });
 }
 

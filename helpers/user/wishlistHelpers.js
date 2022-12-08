@@ -36,7 +36,7 @@ module.exports = {
 
     removeWishlistItem: (userId, productId) => {
         return new Promise(async (resolve, reject) => {
-            await wishlistModel.findOneAndUpdate({ userId }, { $pull: { productIds: productId } }).then((res) => {
+            await wishlistModel.findOneAndUpdate({ userId }, { $pull: { productIds: productId } }).then(() => {
                 resolve()
             })
         })

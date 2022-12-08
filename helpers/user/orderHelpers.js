@@ -28,6 +28,7 @@ module.exports = {
                 address,
                 paymentMethod,
                 paymentStatus,
+                orderDate:Date.now(),
                 deliveryDate
             })
 
@@ -46,7 +47,7 @@ module.exports = {
 
     orders: (userId) => {
         return new Promise(async (resolve, reject) => {
-            await orderModel.find({ userId }).sort({ orderDate: 1 }).populate('products.productId').then((orders) => {
+            await orderModel.find({ userId }).sort({ orderDate: -1 }).populate('products.productId').then((orders) => {
                 resolve(orders)
             })
         })

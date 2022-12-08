@@ -99,7 +99,7 @@ exports.product_details = (id, userId) => {
     return new Promise(async (resolve, reject) => {
 
         let product = await productModel.findOne({ _id: id }).populate('category')
-        let related_products = await productModel.find({ _id: { $ne: id } }).populate('category')
+        let related_products = await productModel.find({ _id: { $ne: id }, isDeleted:false }).populate('category')
 
         // checking that product is already in cart 
         let exist = false;

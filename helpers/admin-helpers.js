@@ -32,7 +32,7 @@ module.exports = {
                 response.status = false;
                 resolve(response)
             }
-        })
+        }).catch(err=> console.log(err))
     },
 
     dashboardDetails: () => {
@@ -249,12 +249,12 @@ module.exports = {
     orders: (page) => {
         return new Promise(async (resolve, reject) => {
 
-            let productsPerPage = 10;
-            let totalProducts = await productModel.find().countDocuments()
-            let totalPages = Math.ceil(totalProducts / productsPerPage)
-            let skip = (page - 1) * productsPerPage
+            let ordersPerPage = 10;
+            let totalOrders = await orderModel.find().countDocuments()
+            let totalPages = Math.ceil(totalOrders / ordersPerPage)
+            let skip = (page - 1) * ordersPerPage
 
-            await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').skip(skip).limit(productsPerPage).then(async (orders) => {
+            await orderModel.find().sort({ orderDate: -1 }).populate('products.productId').skip(skip).limit(ordersPerPage).then(async (orders) => {
                 resolve({ orders, totalPages })
             })
         })

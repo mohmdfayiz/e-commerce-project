@@ -91,9 +91,7 @@ exports.addProduct = async (req, res) => {
 exports.newProduct = async (req, res) => {
 
   let data = req.body
-  req.files.forEach(img => { });
   const productImages = req.files != null ? req.files.map((img) => img.path) : null
-
   adminHelpers.newProduct(data, productImages).then(() => {
     res.redirect("back");
   })
