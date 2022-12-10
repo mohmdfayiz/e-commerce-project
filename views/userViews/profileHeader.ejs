@@ -204,8 +204,18 @@
                     <a href="/account">Account</a>
                 </li>
                 <li>
-                    <a href="/logout">Logout</a>
+                    <a href="#" onclick="logout()">Logout</a>
                 </li>
             </ul>
         </div>
     </header>
+
+    <script>
+        function logout(){
+            $.ajax({
+                url:'/logout',
+                method: 'POST',
+            })
+            location.reload()
+        }
+    </script>
