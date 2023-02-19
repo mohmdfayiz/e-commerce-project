@@ -211,7 +211,6 @@ exports.newCoupon = (req,res) =>{
 
 // DELETE COUPON
 exports.deleteCoupon = (req,res) =>{
-  console.log(req.params.id);
   adminHelpers.deleteCoupon(req.params.id).then(()=>{
     res.json({status:true})
   })
@@ -220,7 +219,6 @@ exports.deleteCoupon = (req,res) =>{
 // RESTORE COUPON
 exports.restoreCoupon = (req,res) =>{
   adminHelpers.restoreCoupon(req.params.id).then(()=>{
-    console.log(req.params.id);
     res.json({status:true})
   })
 }
@@ -280,7 +278,6 @@ exports.orders = (req, res) => {
 exports.orderDetails = (req,res) =>{
   let orderId = req.params.orderId
   adminHelpers.orderDetails(orderId).then((order)=>{
-    console.log(order);
     res.render("adminViews/orderDetails",{order,moment})
   })
 }

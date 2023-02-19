@@ -86,7 +86,7 @@ exports.doSignup = async (req, res) => {
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          return console.log(error);
+          return error
         }
         console.log('Message sent: %s', info.messageId);
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
@@ -217,7 +217,6 @@ exports.setPassword = (req, res) => {
 
 // UPDATE PASSWORD
 exports.updatePassword = (req,res) =>{
-  console.log(req.body);
   let userId = req.session.user._id;
   authenticationHelpers.updatePassword(userId,req.body.password1).then(()=>{
     res.json({status:true})

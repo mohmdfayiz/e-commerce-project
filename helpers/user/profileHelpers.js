@@ -31,7 +31,6 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let { userName, email } = data
             await userModel.findOneAndUpdate({ _id: userId }, { $set: { userName, email } }).then((user) => {
-                console.log(user);
                 resolve();
             })
         })
@@ -71,7 +70,6 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             await addressModel.findOne({ userId }).then((adrs) => {
                 let address = adrs.address[index]
-                console.log(address);
                 resolve(address)
             })
         })

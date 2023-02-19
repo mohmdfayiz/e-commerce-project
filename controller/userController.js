@@ -50,7 +50,6 @@ exports.filterProducts = (req, res) => {
   let filter = req.params.filter
   productHelpers.filterProducts(filter).then((response) => {
     let { subcategories, products } = response
-    console.log(products);
     if (req.session.userLogin) {
       wishlistHelpers.wishlist_items(req.session.user._id).then((wishlistItems) => {
         res.render('userViews/shop', { subcategories, products, wishlistItems, login: true })
@@ -158,7 +157,6 @@ exports.edit_address = (req, res) => {
   let adrsId = req.params.index
   let userId = req.session.user._id
   let address = req.body
-  console.log(address);
   profileHelpers.edit_address(userId, adrsId, address).then(() => {
     res.redirect('/manageAddress')
   })
@@ -367,7 +365,6 @@ exports.orderSuccess = (req, res) => {
 exports.orders = (req, res) => {
   let userId = req.session.user._id
   orderHelpers.orders(userId).then((orders) => {
-    console.log(orders);
     res.render('userViews/orders', { moment, orders })
   })
 }
@@ -376,7 +373,6 @@ exports.orders = (req, res) => {
 exports.orderDetails = (req, res) => {
   let orderId = req.params.orderId
   orderHelpers.orderDetails(orderId).then((order) => {
-    console.log(order);
     res.render('userViews/orderDetails', { order, moment })
   })
 }

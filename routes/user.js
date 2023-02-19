@@ -6,7 +6,7 @@ const authenticationController = require("../controller/userAuthController");
 const middlewares = require("../middleware/auth-middlewares");
 
 // GET METHODS
-router.get("/signup", authenticationController.signup)
+router.get("/signup",authenticationController.signup)
 router.get('/email_varification', authenticationController.email_vairification)
 router.get("/", controller.home)
 router.get('/bikes', controller.bikes)

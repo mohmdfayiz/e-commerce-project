@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="container bg0 p-t-20 p-b-85 ">
-        <div class="row">
+        <div class="row" id="cartContent">
           <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
             <div class="m-l-25 m-r--38 m-lr-0-xl">
               <div class="wrap-table-shopping-cart">
@@ -40,7 +40,8 @@
                       <td class="column-1">
                         <form action="/removeCartItem/<%= product.total %>/<%= product.productId._id %>" method="POST">
                           <button type="submit" class="how-itemcart1">
-                            <img src="<%=product.productId.imageUrl[0] %>" alt="IMG" style="height: 60px; width: 60px; object-fit: cover;" />
+                            <img src="<%=product.productId.imageUrl[0] %>" alt="IMG"
+                              style="height: 60px; width: 60px; object-fit: cover;" />
                           </button>
                         </form>
                       </td>
@@ -52,21 +53,17 @@
                       </td>
                       <td class="column-4">
                         <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                          <form action="/decrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>"
-                            method="POST">
-                            <button id="minusbtn" type="submit"
-                              class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                              <i class="fs-16 zmdi zmdi-minus"></i>
-                            </button>
-                          </form>
+                          <button id="minusbtn"
+                            onclick="decrementQuantity('<%=product.productId._id%>','<%= product.productId.price %>')"
+                            class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                            <i class="fs-16 zmdi zmdi-minus"></i>
+                          </button>
                           <input class="mtext-104 cl3 txt-center num-product" type="number" id="quantity"
                             value="<%= product.quantity %>" readonly />
-                          <form action="/incrementQuantity/<%= product.productId.price %>/<%=product.productId._id%>"
-                            method="POST">
-                            <button type="submit" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                              <i class="fs-16 zmdi zmdi-plus"></i>
-                            </button>
-                          </form>
+                          <button class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
+                            onclick="incrementQuantity('<%=product.productId._id%>','<%= product.productId.price %>')">
+                            <i class="fs-16 zmdi zmdi-plus"></i>
+                          </button>
                         </div>
                       </td>
                       <td class="column-5" id="total">
@@ -99,9 +96,9 @@
                 </div>
 
                 <div class="size-209">
-                    <span class="mtext-110 cl2 text-success">
-                      Free
-                    </span>
+                  <span class="mtext-110 cl2 text-success">
+                    Free
+                  </span>
                 </div>
               </div>
 
@@ -125,12 +122,31 @@
       <% } %>
 
         <script>
-          let quantity = document.getElementById("quantity").value;
-          if (quantity == 1) {
-            document.getElementById("minusbtn").disabled = true
-          } else {
-            document.getElementById("minusbtn").disabled = false
+          function incrementQuantity(productId, price) {
+            $.ajax({
+              url: `/incrementQuantity/${price}/${productId}`,
+              method: 'POST',
+              success: (response) => {
+                $("#cartContent").load(" #cartContent > *")
+              }
+            })
           }
+
+          function decrementQuantity(productId, price) {
+            let quantity = document.getElementById("quantity").value;
+            if (quantity <= 1) {
+              return
+            } else {
+              $.ajax({
+                url: `/decrementQuantity/${price}/${productId}`,
+                method: 'POST',
+                success: (response) => {
+                  $("#cartContent").load(" #cartContent > *")
+                }
+              })
+            }
+          }
+
         </script>
 
         <%- include('../userFooter.ejs') -%>

@@ -17,18 +17,18 @@ module.exports = {
             if (user) {
                 bcrypt.compare(userData.password, user.password).then((status) => {
                     if (status) {
-                        console.log("login success");
+                        // login success
                         response.user = user;
                         response.status = true;
                         resolve(response)
                     } else {
-                        console.log("login failed! password miss match.");
+                        // login failed! password miss match
                         response.passwordErr = true;
                         resolve(response)
                     }
                 })
             } else {
-                console.log('login failed, no such email');
+                // login failed, no such email
                 response.status = false;
                 resolve(response)
             }

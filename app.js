@@ -4,8 +4,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const Mongoose = require("./configuration/connection");
 const multer = require("multer");
-const nodemailer = require("nodemailer");
-// const Swal = require('sweetalert2')
+
 
 const app = express();
 
@@ -43,7 +42,7 @@ app.use(
     secret: "Your_Secret_Key",
     resave: false,
     saveUninitialized: false,
-    cookie:{maxAge: 60 * 60 * 1000} // 1 hour
+    cookie:{maxAge: 24 * 60 * 60 * 1000} // 1 day
   })
 );
 
